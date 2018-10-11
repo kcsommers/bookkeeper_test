@@ -1,7 +1,6 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {Font} from 'expo'
 
 export default class Nav extends React.Component {
   render() {

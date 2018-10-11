@@ -1,15 +1,35 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
+import { StyleSheet } from 'react-native'
 import {createStackNavigator} from 'react-navigation'
 import {createStore} from 'redux'
-import {Provider} from 'react-redux'
 import {reducers} from './reducers';
+import Nav from './components/Nav'
 import HomeView from './views/HomeView'
+import SignupView from './views/SignupView'
 import {Dimensions} from 'react-native' 
 import {Font} from 'expo'
 
 const AppNavigator = createStackNavigator({
-  Home: HomeView
+  Home: {
+    screen: HomeView,
+    navigationOptions: {
+      header: <Nav />,
+      headerStyle: {
+        backgroundColor: 'transparent'
+      }
+    }
+  },
+  Signup: {
+    screen: SignupView,
+    navigationOptions: {
+      header: <Nav />,
+      headerStyle: {
+        backgroundColor: 'transparent'
+      }
+    }
+  }
+}, {
+  initialRouteName: 'Signup'
 })
 
 const store = createStore(reducers)
