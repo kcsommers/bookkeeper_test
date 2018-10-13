@@ -1,49 +1,26 @@
 import React from 'react';
-import { StyleSheet } from 'react-native'
-import {createStackNavigator} from 'react-navigation'
-import {createStore} from 'redux'
-import {reducers} from './reducers';
-import Nav from './components/Nav'
-import HomeView from './views/HomeView'
-import SignupView from './views/SignupView'
-import {Dimensions} from 'react-native' 
-import {Font} from 'expo'
+import { 
+  AsyncStorage,
+  Dimensions
+ } from 'react-native'
+import axios from 'axios'
+import {connect} from 'react-redux'
+import {setAuthUser} from './actions/authUserActions'
+import {orientationChange} from './actions/orientationActions'
+import AppNavigator from './services/AppNavigator'
 
-const AppNavigator = createStackNavigator({
-  Home: {
-    screen: HomeView,
-    navigationOptions: {
-      header: <Nav />,
-      headerStyle: {
-        backgroundColor: 'transparent'
-      }
-    }
-  },
-  Signup: {
-    screen: SignupView,
-    navigationOptions: {
-      header: <Nav />,
-      headerStyle: {
-        backgroundColor: 'transparent'
-      }
-    }
-  }
-}, {
-  initialRouteName: 'Signup'
-})
-
-const store = createStore(reducers)
-export default class App extends React.Component {
+class App extends React.Component {
   constructor(props) {
     super(props)
     const {width, height} = Dimensions.get('window')
     this.state = {
       width, 
       height,
-      orientation: (width < height) ? 'portrait' : 'landscape',
-      fontsLoaded: false
+      orientation: (width < height) ? 'portrait' : 'landscape'
     }
     this.onLayout = this.onLayout.bind(this)
+    this.fetchToken = this.fetchToken.bind(this)
+    this.setAuthUser = this.setAuthUser.bind(this)
   }
 
   onLayout() {
@@ -55,23 +32,54 @@ export default class App extends React.Component {
     })
   }
 
-  async componentDidMount() {
-    await Font.loadAsync({
-      'Merriweather': require('./assets/fonts/Merriweather-Regular.ttf'),
-      'Pacifico': require('./assets/fonts/Pacifico-Regular.ttf')
-    })
+  setAuthUser(user) {
+    this.props.setAuthUser(user)
+  }
 
-    this.setState({fontsLoaded: true})
+  async verifyToken(token) {
+    console.log('VERIFYING TOKEN')
+    const url = 'http://localhost:3000/auth/verify'
+    const verified = await axios.get(url, {
+      headers: {
+        Authorization: 'Bearer ' + token
+      }
+    })
+    if(verified.data.verified) {
+      this.setAuthUser(verified.data.authData.user)
+    }
+    else {
+      console.log('ERROR', verified.data.err)
+    }
+  }
+
+  async fetchToken() {
+    try{
+      const token = await AsyncStorage.getItem('bookkeeperToken')
+      if(token) {
+        console.log("FOUND TOKEN", token)
+        this.verifyToken(token)
+      }
+      else {
+        console.log('NO TOKEN FOUND')
+      }
+    }
+    catch(err) {
+      console.log('ERROR FETCHING TOKEN', err)
+    }
+  }
+
+  async componentDidMount() {
+    if(!this.state.authUser) this.fetchToken()
   }
 
   render() {
-    const theApp = (this.state.fontsLoaded) ? <AppNavigator /> : null
-    return theApp
+    AsyncStorage.clear()
+    return <AppNavigator />
   }
 }
 
-const styles = StyleSheet.create({
-  appWrapper: {
+const mapStateToProps = state => state
 
-  }
-});
+const mapActionsToProps = {setAuthUser, orientationChange} 
+
+export default connect(mapStateToProps, mapActionsToProps)(App)

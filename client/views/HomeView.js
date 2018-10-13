@@ -4,7 +4,6 @@ import SearchBooks from '../components/SearchBooks'
 import SearchUsers from '../components/SearchUsers'
 import SearchClubs from '../components/SearchClubs'
 import NavDots from '../components/NavDots'
-import {Dimensions} from 'react-native'
 
 export default class HomeView extends React.Component {
   constructor(props) {

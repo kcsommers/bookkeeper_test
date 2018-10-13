@@ -4,6 +4,7 @@ const bp = require('body-parser');
 const app = express();
 const port = process.env.PORT || 3000;
 const auth = require('./controllers/auth');
+const passport = require('./config/passportConfig.js')
 app.use(express.static(__dirname + 'static'));
 app.use(bp.urlencoded({extended: true}));
 app.use(bp.json());

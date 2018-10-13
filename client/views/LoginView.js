@@ -1,7 +1,6 @@
 import React from 'react'
 import { 
   StyleSheet, 
-  AsyncStorage,
   Text, 
   TextInput, 
   View,
@@ -14,14 +13,12 @@ import {connect} from 'react-redux'
 import {setAuthUser} from '../actions/authUserActions'
 import {orientationChange} from '../actions/orientationActions'
 
-class SignupView extends React.Component {
+class LoginView extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       username: '',
-      email: '',
-      password: '',
-      message: ''
+      password: ''
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
@@ -30,9 +27,6 @@ class SignupView extends React.Component {
   handleChange(text, field) {
     if(field === 'name') {
       this.setState({username: text})
-    }
-    else if(field === 'email') {
-      this.setState({email: text})
     }
     else if(field === 'password') {
       this.setState({password: text})
@@ -49,14 +43,12 @@ class SignupView extends React.Component {
   }
 
   async handleSubmit() {
-    const url = 'http://localhost:3000/auth/signup'
+    const url = 'http://localhost:3000/auth/login'
     const payload = {
       username: this.state.username,
-      email: this.state.email,
       password: this.state.password
     }
     const results = await axios.post(url, payload)
-
     if(results.data.token) {
       const user = {
         username: this.state.username,
@@ -71,27 +63,19 @@ class SignupView extends React.Component {
         message: results.data.error.message
       })
     }
-
-    console.log('SIGNUP RESULTS', results.data)
   }
 
   render() {
     return (
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.titleWrapper}>
-          <Text style={styles.title}>Sign Up</Text>
+          <Text style={styles.title}>Login</Text>
         </View>
         <TextInput 
           style={[styles.input]}
           placeholder="Username"  
           placeholderTextColor="#fff"
           onChangeText={(text) => {this.handleChange(text, 'name')}}  
-          /> 
-        <TextInput 
-          style={[styles.input]}
-          placeholder="Email"
-          placeholderTextColor="#fff"  
-          onChangeText={(text) => {this.handleChange(text, 'email')}}  
           /> 
         <TextInput 
           style={[styles.input]}
@@ -102,7 +86,7 @@ class SignupView extends React.Component {
         <TouchableOpacity 
           style={styles.submitBtn}
           onPress={this.handleSubmit}>
-          <Text style={styles.btnText}>Sign Up</Text>
+          <Text style={styles.btnText}>Login</Text>
         </TouchableOpacity>
       </ScrollView>
     )
@@ -157,4 +141,4 @@ const mapStateToProps = state => {
 }
 
 const mapActionsToProps = {setAuthUser, orientationChange} 
-export default connect(mapStateToProps, mapActionsToProps)(SignupView)
+export default connect(mapStateToProps, mapActionsToProps)(LoginView)
