@@ -5,13 +5,13 @@ import {
   TextInput, 
   View,
   ScrollView,
-  TouchableOpacity 
+  TouchableOpacity,
+  AsyncStorage 
 } from 'react-native'
 import axios from 'axios'
 
 import {connect} from 'react-redux'
 import {setAuthUser} from '../actions/authUserActions'
-import {orientationChange} from '../actions/orientationActions'
 
 class LoginView extends React.Component {
   constructor(props) {
@@ -55,6 +55,7 @@ class LoginView extends React.Component {
         email: this.state.email,
         token: results.data.token
       }
+      this.props.navigation.navigate('Home')
       this.props.setAuthUser(user)
       this.setToken(results.data.token)
     }
@@ -80,7 +81,8 @@ class LoginView extends React.Component {
         <TextInput 
           style={[styles.input]}
           placeholder="Password"  
-          placeholderTextColor="#fff"  
+          placeholderTextColor="#fff"
+          secureTextEntry={true} 
           onChangeText={(text) => {this.handleChange(text, 'password')}}  
         />
         <TouchableOpacity 
@@ -88,6 +90,12 @@ class LoginView extends React.Component {
           onPress={this.handleSubmit}>
           <Text style={styles.btnText}>Login</Text>
         </TouchableOpacity>
+
+        <View>
+          <TouchableOpacity onPress={() => {this.props.navigation.navigate('Signup')}}>
+            <Text style={{color: '#fff', textAlign: 'center'}}>Create an Account</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     )
   }
@@ -102,8 +110,6 @@ const styles = StyleSheet.create({
     paddingRight: 30
   },  
   titleWrapper: {
-    borderBottomColor: '#fff',
-    borderBottomWidth: 2,
     paddingTop: 5,
     paddingBottom: 5,
     marginBottom: 10
@@ -111,7 +117,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     color: '#fff',
-    borderBottomColor: 'green'
   },
   input: {
     fontSize: 20,
@@ -125,7 +130,8 @@ const styles = StyleSheet.create({
   },
   submitBtn: {
     backgroundColor: '#c13149',
-    marginTop: 20
+    marginTop: 20,
+    marginBottom: 50
   },
   btnText: {
     color: '#fff',
@@ -140,5 +146,5 @@ const mapStateToProps = state => {
   return state
 }
 
-const mapActionsToProps = {setAuthUser, orientationChange} 
+const mapActionsToProps = {setAuthUser} 
 export default connect(mapStateToProps, mapActionsToProps)(LoginView)

@@ -1,8 +1,5 @@
 import React from 'react'
 import {
-  StyleSheet, 
-  View, 
-  Image,
   Animated,
   Easing
 } from 'react-native'

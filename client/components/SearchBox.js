@@ -6,14 +6,49 @@ import {
   View ,
   TouchableOpacity
 } from 'react-native'
+import {withNavigation} from 'react-navigation'
+import axios from 'axios'
+import {connect} from 'react-redux'
+import {setSearchResults} from '../actions/searchResultsActions'
 
+class SearchBox extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      page: this.props.page,
+      searchTerm: ''
+    }
+    this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleChange = this.handleChange.bind(this)
+  }
 
-export default class SearchBox extends React.Component {
+  handleChange(text, field) {
+    if(field === 'searchTerm') {
+      this.setState({searchTerm: text})
+    }
+  }
+
+  async handleSubmit() {
+    let url, page
+    if(this.state.page === 'searchBooks') {
+      url = `https://www.googleapis.com/books/v1/volumes?q=${this.state.searchTerm}&maxResults=10`
+      page = 'BookResults'
+    }
+
+    try {
+      const results = await axios.get(url)
+      this.props.setSearchResults(results.data.items)
+      this.props.navigation.navigate(page, {searchTerm: this.state.searchTerm})
+    }
+    catch(err) {
+      console.log('ERROR FINDING BOOKS', err)
+    }
+  }
+
   render() {
-    let mainText = ''
-    let subText = ''
+    let mainText, subText = ''
 
-    switch(this.props.page) {
+    switch(this.state.page) {
       case 'searchBooks':
         mainText = 'Search books by title, author or isbn',
         subText = ''
@@ -31,8 +66,11 @@ export default class SearchBox extends React.Component {
       <View style={styles.container}>
         <Text style={styles.mainText}>{mainText}</Text>
         <Text style={styles.subText}>{subText}</Text>
-        <TextInput style={styles.input} />
-        <TouchableOpacity style={styles.submit}>
+        <TextInput 
+          style={styles.input} 
+          onChangeText={(text) => {this.handleChange(text, 'searchTerm')}}
+         />
+        <TouchableOpacity onPress={this.handleSubmit} style={styles.submit}>
           <Text style={styles.submitText}>Search</Text>
         </TouchableOpacity>
       </View>
@@ -86,3 +124,8 @@ const styles = StyleSheet.create({
     fontSize: 20
   }
 })
+
+const mapStateToProps = (state) => ({searchResults: state.searchResults})
+const mapActionsToProps = {setSearchResults} 
+
+export default withNavigation(connect(mapStateToProps, mapActionsToProps)(SearchBox))

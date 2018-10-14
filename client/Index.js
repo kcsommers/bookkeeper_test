@@ -4,10 +4,12 @@ import {createStore, combineReducers} from 'redux'
 import {Provider} from 'react-redux'
 import {Font} from 'expo'
 import authUserReducer from './reducers/authUserReducer'
+import searchResultsReducer from './reducers/searchResultsReducer'
 import orientationReducer from './reducers/orientationReducer'
 
 const allReducers = combineReducers({
   authUser: authUserReducer,
+  searchResults: searchResultsReducer,
   orientation: orientationReducer
 })
 

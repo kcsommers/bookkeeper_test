@@ -63,6 +63,7 @@ class SignupView extends React.Component {
         email: this.state.email,
         token: results.data.token
       }
+      this.props.navigation.navigate('Home')
       this.props.setAuthUser(user)
       this.setToken(results.data.token)
     }
@@ -96,7 +97,8 @@ class SignupView extends React.Component {
         <TextInput 
           style={[styles.input]}
           placeholder="Password"  
-          placeholderTextColor="#fff"  
+          placeholderTextColor="#fff" 
+          secureTextEntry={true} 
           onChangeText={(text) => {this.handleChange(text, 'password')}}  
         />
         <TouchableOpacity 
@@ -118,8 +120,6 @@ const styles = StyleSheet.create({
     paddingRight: 30
   },  
   titleWrapper: {
-    borderBottomColor: '#fff',
-    borderBottomWidth: 2,
     paddingTop: 5,
     paddingBottom: 5,
     marginBottom: 10
