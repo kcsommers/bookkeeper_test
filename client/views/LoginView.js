@@ -50,14 +50,9 @@ class LoginView extends React.Component {
     }
     const results = await axios.post(url, payload)
     if(results.data.token) {
-      const user = {
-        username: this.state.username,
-        email: this.state.email,
-        token: results.data.token
-      }
-      this.props.navigation.navigate('Home')
-      this.props.setAuthUser(user)
+      this.props.setAuthUser(results.data.authUser)
       this.setToken(results.data.token)
+      this.props.navigation.navigate('Home')
     }
     else if(results.data.error) {
       this.setState({
@@ -142,9 +137,6 @@ const styles = StyleSheet.create({
   }
 })
 
-const mapStateToProps = state => {
-  return state
-}
-
+const mapStateToProps = state => state
 const mapActionsToProps = {setAuthUser} 
 export default connect(mapStateToProps, mapActionsToProps)(LoginView)

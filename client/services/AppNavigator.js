@@ -8,14 +8,14 @@ import HomeView from '../views/HomeView'
 import BookResultsView from '../views/BookResultsView'
 import SignupView from '../views/SignupView'
 import LoginView from '../views/LoginView'
+import SearchView from '../views/SearchView'
 
 const AppNavigator = createStackNavigator({
   Home: {
     screen: HomeView,
     navigationOptions: {
-      header: <Nav />,
       headerStyle: {
-        backgroundColor: 'transparent'
+        backgroundColor: '#1c4b44'
       }
     }
   },
@@ -27,20 +27,27 @@ const AppNavigator = createStackNavigator({
       }
     }
   },
-  Profile: {
-    screen: ProfileView,
+  Search: {
+    screen: SearchView,
     navigationOptions: {
       headerStyle: {
         display: 'none'
       }
     }
   },
+  Profile: {
+    screen: ProfileView,
+    navigationOptions: {
+      headerStyle: {
+        backgroundColor: '#1c4b44'
+      }
+    }
+  },
   Login: {
     screen: LoginView,
     navigationOptions: {
-      header: <Nav />,
       headerStyle: {
-        backgroundColor: 'transparent'
+        backgroundColor: '#1c4b44'
       }
     }
   },
@@ -55,9 +62,8 @@ const AppNavigator = createStackNavigator({
   Signup: {
     screen: (props) =>  <SignupView {...props} />,
     navigationOptions: {
-      header: <Nav />,
       headerStyle: {
-        backgroundColor: 'transparent'
+        backgroundColor: '#1c4b44'
       }
     }
   }
