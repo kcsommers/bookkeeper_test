@@ -106,6 +106,12 @@ class SignupView extends React.Component {
           onPress={this.handleSubmit}>
           <Text style={styles.btnText}>Sign Up</Text>
         </TouchableOpacity>
+
+        <View>
+          <TouchableOpacity onPress={() => {this.props.navigation.navigate('Login')}}>
+            <Text style={{color: '#fff', textAlign: 'center'}}>Have an Account? Login</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     )
   }

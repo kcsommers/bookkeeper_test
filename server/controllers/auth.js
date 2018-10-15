@@ -66,7 +66,6 @@ const hashPassword = (req, res, next) => {
 // MIDDLEWARE - GET TOKEN FROM REQ
 const verifyToken = (req, res, next) => {
   const bearerHeader = req.headers['authorization'];
-  console.log('BEAR HEAD', bearerHeader)
   if(typeof bearerHeader !== 'undefined') {
     const token = bearerHeader.split(' ')[1]
     req.token = token;
@@ -81,9 +80,16 @@ const verifyToken = (req, res, next) => {
 router.get('/verify', verifyToken, (req, res) => {
   console.log('HIT VERIFY TOKEN ROUTE')
   jwt.verify(req.token, process.env.AUTH_SECRET, (err, authData) => {
-    console.log(err, authData)
     if(!err) {
-      res.json({authData, verified: true});
+      db.user.find({
+        where: {username: authData.user},
+        include: [{
+          model: db.list,
+          include: [db.book]
+        }]
+      }).then((user) => {
+        res.json({authUser: user.dataValues, verified: true});
+      });
     }
     else {
       res.json({err, verified: false});
@@ -93,14 +99,22 @@ router.get('/verify', verifyToken, (req, res) => {
 
 // LOGIN ROUTE
 router.post('/login', passport.authenticate('local', {session: false}), (req, res) => {
-  console.log("HIT LOGIN ROUTE", req.body)
+  console.log("HIT LOGIN ROUTE")
   jwt.sign(
-    {user: req.body}, 
+    {user: req.body.username}, 
     process.env.AUTH_SECRET,
     {expiresIn: '1h'},
     (err, token) => {
       if(!err) {
-        res.json({token})
+        db.user.find({
+          where: {username: req.body.username},
+          include: [{
+            model: db.list,
+            include: [db.book]
+          }]
+        }).then((user) => {
+          res.json({authUser: user.dataValues, token})
+        })
       }
       else {
         console.log('ERRRRRRR', err)

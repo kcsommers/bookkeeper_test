@@ -26,13 +26,10 @@ class SearchBar extends React.Component {
   }
 
   render() {
+    const type = this.props.styles
+    const styles = (type === 'full') ? fullWidthStyles : smallStyles
     return(
-      <View style={{
-        backgroundColor: '#fff',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        padding: 10
-      }}>
+      <View style={styles.container}>
         <TextInput 
           style={styles.input}
           placeholder="New Search"  
@@ -45,10 +42,33 @@ class SearchBar extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
+const fullWidthStyles = StyleSheet.create({
+  container: {
+    backgroundColor: '#fff',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10
+  },
+
   input: {
     flex: 1,
     fontSize: 16
+  }
+})
+
+const smallStyles = StyleSheet.create({
+  container: {
+    backgroundColor: '#fff',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10,
+    width: '80%',
+    borderRadius: 20,
+    marginLeft: 'auto',
+    marginRight: 'auto'
+  },
+  input: {
+
   }
 })
 

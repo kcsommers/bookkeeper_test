@@ -20,7 +20,7 @@ class BookResultsView extends React.Component {
 
     return(
       <ScrollView>
-        <SearchBar type="books" />
+        <SearchBar type="books" styles="full" />
         <View>
           <Text style={styles.searchTerm}>Showing results for {searchTerm}</Text>
         </View>

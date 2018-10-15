@@ -3,16 +3,12 @@ const express = require('express');
 const bp = require('body-parser');
 const app = express();
 const port = process.env.PORT || 3000;
-const auth = require('./controllers/auth');
 app.use(express.static(__dirname + 'static'));
 app.use(bp.urlencoded({extended: true}));
 app.use(bp.json());
-app.use('/auth', auth.router);
+app.use('/auth', require('./controllers/auth').router);
+app.use('/books', require('./controllers/books').router);
+app.use('/lists', require('./controllers/lists').router);
 
-app.get('/', (req, res) => {
-  res.send('YO')
-})
+app.listen(port, () => {console.log(`Hooked on ${port}`);});
 
-app.listen(port, () => {
-    console.log(`Hooked on ${port}`);
-});

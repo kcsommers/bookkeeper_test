@@ -6,28 +6,45 @@ import {
   Image,
   TouchableOpacity
 } from 'react-native'
+import axios from 'axios'
 import {Dropdown} from 'react-native-material-dropdown'
-
-const listNames = ['Books I\'ve Read', 'Books I\'d like to read']
+import {connect} from 'react-redux'
 
 class BookResult extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      selectedList: listNames[0]
+      selectedList: this.props.authUser.lists[0].name
     }
 
     this.handleSelect = this.handleSelect.bind(this)
+    this.addToList = this.addToList.bind(this)
   }
 
   handleSelect(selectedList) {
     this.setState({selectedList})
   }
 
+  async addToList(book) {
+    const bookData = {
+      title: book.volumeInfo.title,
+      authors: book.volumeInfo.authors.join(', '),
+      description: book.searchInfo.textSnippet,
+      imgUrl: book.volumeInfo.imageLinks.smallThumbnail,
+      banner: '',
+      userId: this.props.authUser.id
+    }
+    const list = this.props.authUser.lists.find((listObj) => listObj.name = this.state.selectedList)
+    const url = 'http://localhost:3000/books'
+    const results = await axios.post(url, {bookData, list})
+    console.log('BOOK DATA', results.data)
+  }
+
   render() {
-    let data = listNames.map(value => ({value}))
+    let data = this.props.authUser.lists.map(list => ({value: list.name}))
     const book = this.props.book
     const volumeInfo = book.volumeInfo
+    const authors = (volumeInfo.authors) ? volumeInfo.authors.join(', ') : ''
     const textSnippet = (book.searchInfo) ? book.searchInfo.textSnippet : ''
     return(
       <View style={styles.bookWrapper}>
@@ -38,7 +55,7 @@ class BookResult extends React.Component {
             resizeMode="contain" />
           <View style={{flex: 1}}>
             <Text style={styles.title}>{volumeInfo.title}</Text>
-            <Text style={styles.authors}>{volumeInfo.authors[0]}</Text>
+            <Text style={styles.authors}>{authors}</Text>
             <Text style={styles.description}>{textSnippet}</Text>
           </View>
         </View>
@@ -48,7 +65,7 @@ class BookResult extends React.Component {
             label="Select List"
             value={this.state.selectedList}
             onChangeText={(list) => {this.handleSelect(list)}} />
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity onPress={() => {this.addToList(book)}} style={styles.button}>
             <Text style={styles.btnText}>Add to List</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button}>
@@ -102,4 +119,5 @@ const styles = StyleSheet.create({
   }
 })
 
-export default BookResult
+const mapStateToProps = (state) => ({authUser: state.authUser})
+export default connect(mapStateToProps)(BookResult)

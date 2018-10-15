@@ -33,7 +33,7 @@ class IntroView extends React.Component {
       }
     })
     if(verified.data.verified) {
-      this.setAuthUser(verified.data.authData.user)
+      this.setAuthUser(verified.data.authUser)
       setTimeout(() => {
         this.props.navigation.navigate('Home')
       }, 1000)
@@ -48,7 +48,7 @@ class IntroView extends React.Component {
     try{
       const token = await AsyncStorage.getItem('bookkeeperToken')
       if(token) {
-        console.log("FOUND TOKEN", token)
+        console.log("FOUND TOKEN")
         this.verifyToken(token)
       }
       else {
@@ -71,9 +71,6 @@ class IntroView extends React.Component {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Bookkeeper</Text>
-        <View style={{alignItems: 'center'}}>
-          <LoadingIcon />
-        </View>
       </View>
     )
   }
