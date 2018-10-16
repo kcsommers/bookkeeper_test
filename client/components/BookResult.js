@@ -10,12 +10,14 @@ import {withNavigation} from 'react-navigation'
 import axios from 'axios'
 import {Dropdown} from 'react-native-material-dropdown'
 import {connect} from 'react-redux'
+import {addBook} from '../actions/authUserActions'
 
 class BookResult extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      selectedList: this.props.authUser.lists[0].name
+      selectedList: this.props.authUser.lists[0].name,
+      message: ''
     }
 
     this.handleSelect = this.handleSelect.bind(this)
@@ -38,7 +40,14 @@ class BookResult extends React.Component {
     const list = this.props.authUser.lists.find((listObj) => listObj.name = this.state.selectedList)
     const url = 'http://localhost:3000/books'
     const results = await axios.post(url, {bookData, list})
-    this.props.navigation.navigate('Profile')
+    if(!results.data.err) {
+      console.log(results.data)
+      this.props.addBook(bookData, results.data.list.id)
+      this.props.navigation.navigate('Profile')
+    }
+    else {
+      console.log('ERROR ADDING BOOK', err)
+    }
   }
 
   render() {
@@ -47,12 +56,13 @@ class BookResult extends React.Component {
     const volumeInfo = book.volumeInfo
     const authors = (volumeInfo.authors) ? volumeInfo.authors.join(', ') : ''
     const textSnippet = (book.searchInfo) ? book.searchInfo.textSnippet : ''
+    const imgSrc = (volumeInfo.imageLinks) ? volumeInfo.imageLinks.smallThumbnail : ''
     return(
       <View style={styles.bookWrapper}>
         <View style={{flexDirection: 'row', alignItems: 'flex-start'}}>
           <Image 
             style={styles.thumbnail} 
-            source={{uri: volumeInfo.imageLinks.smallThumbnail}}
+            source={{uri: imgSrc}}
             resizeMode="contain" />
           <View style={{flex: 1}}>
             <Text style={styles.title}>{volumeInfo.title}</Text>
@@ -111,7 +121,6 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     marginTop: 5,
     marginBottom: 5
-
   },
   btnText: {
     textAlign: 'center',
@@ -121,4 +130,5 @@ const styles = StyleSheet.create({
 })
 
 const mapStateToProps = (state) => ({authUser: state.authUser})
-export default withNavigation(connect(mapStateToProps)(BookResult))
+const mapActionsToProps = {addBook}
+export default withNavigation(connect(mapStateToProps, mapActionsToProps)(BookResult))
