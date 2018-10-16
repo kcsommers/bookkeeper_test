@@ -35,12 +35,12 @@ class IntroView extends React.Component {
     if(verified.data.verified) {
       this.setAuthUser(verified.data.authUser)
       setTimeout(() => {
-        this.props.navigation.navigate('Home')
+        this.props.navigation.navigate('App')
       }, 1000)
     }
     else {
       console.log('ERROR', verified.data.err)
-      this.props.navigation.navigate('Login')
+      this.props.navigation.navigate('Auth')
     }
   }
   
@@ -54,7 +54,7 @@ class IntroView extends React.Component {
       else {
         console.log('NO TOKEN FOUND')
         setTimeout(() => {
-          this.props.navigation.navigate('Login')
+          this.props.navigation.navigate('Auth')
         }, 1000)
       }
     }

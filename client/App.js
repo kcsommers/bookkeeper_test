@@ -5,6 +5,7 @@ import {
  } from 'react-native'
 import AppNavigator from './navigators/AppNavigator'
 import BottomTabNavigator from './navigators/BottomTabNavigator'
+import SwitchNavigator from './navigators/SwitchNavigator'
 
 class App extends React.Component {
   onLayout() {
@@ -18,7 +19,7 @@ class App extends React.Component {
 
   render() {
     // AsyncStorage.clear()
-    return <BottomTabNavigator />
+    return <SwitchNavigator />
   }
 }
 

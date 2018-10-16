@@ -52,7 +52,7 @@ class LoginView extends React.Component {
     if(results.data.token) {
       this.props.setAuthUser(results.data.authUser)
       this.setToken(results.data.token)
-      this.props.navigation.navigate('Home')
+      this.props.navigation.navigate('Search')
     }
     else if(results.data.error) {
       this.setState({

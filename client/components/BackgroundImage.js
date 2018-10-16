@@ -17,6 +17,6 @@ export default class BackgroundImage extends React.Component {
 const styles = StyleSheet.create({
   imageStyles: {
     position: 'absolute',
-    zIndex: -1000,
+    zIndex: -1000
   }
 })
