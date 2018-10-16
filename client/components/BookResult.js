@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity
 } from 'react-native'
+import {withNavigation} from 'react-navigation'
 import axios from 'axios'
 import {Dropdown} from 'react-native-material-dropdown'
 import {connect} from 'react-redux'
@@ -37,7 +38,7 @@ class BookResult extends React.Component {
     const list = this.props.authUser.lists.find((listObj) => listObj.name = this.state.selectedList)
     const url = 'http://localhost:3000/books'
     const results = await axios.post(url, {bookData, list})
-    console.log('BOOK DATA', results.data)
+    this.props.navigation.navigate('Profile')
   }
 
   render() {
@@ -120,4 +121,4 @@ const styles = StyleSheet.create({
 })
 
 const mapStateToProps = (state) => ({authUser: state.authUser})
-export default connect(mapStateToProps)(BookResult)
+export default withNavigation(connect(mapStateToProps)(BookResult))

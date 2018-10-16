@@ -1,5 +1,5 @@
 import React from 'react';
-import {createStackNavigator} from 'react-navigation'
+import {createStackNavigator, createBottomTabNavigator} from 'react-navigation'
 
 import Nav from '../components/Nav'
 import IntroView from '../views/IntroView'

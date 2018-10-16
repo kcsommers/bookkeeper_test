@@ -6,7 +6,7 @@ const db = require('../models');
 router.post('/', (req, res) => {
   console.log('HIT CREATE BOOK ROUTE')
   const bookData = req.body.bookData
-  const list = req.body.list
+  const listData = req.body.list
   db.book.create({
     title: bookData.title,
     authors: bookData.authors,
@@ -15,14 +15,19 @@ router.post('/', (req, res) => {
     banner: bookData.banner,
     userId: bookData.userId
   }).then((book) => {
-    book.addList(list).then((list) => {
-      res.json({book})
+    db.list.findById(listData.id).then((list) => {
+      list.addBook(book).then((data) => {
+        res.json({list})
+      }).catch((err) => {
+        console.log("ERROR ADDING BOOK TO LIST", err)
+        res.json({err})
+      })
     }).catch((err) => {
-      console.log('ERROR ADDING LIST TO BOOK', err)
+      console.log("ERROR FIND LIST IN DB", err)
       res.json({err})
     })
   }).catch((err) => {
-    console.log('ERROR CREATING BOOK IN DB')
+    console.log("ERROR CREATING BOOK IN DB", err)
     res.json({err})
   });
 });

@@ -3,7 +3,8 @@ import {
   Dimensions,
   AsyncStorage
  } from 'react-native'
-import AppNavigator from './services/AppNavigator'
+import AppNavigator from './navigators/AppNavigator'
+import BottomTabNavigator from './navigators/BottomTabNavigator'
 
 class App extends React.Component {
   onLayout() {
@@ -17,7 +18,7 @@ class App extends React.Component {
 
   render() {
     // AsyncStorage.clear()
-    return <AppNavigator />
+    return <BottomTabNavigator />
   }
 }
 
