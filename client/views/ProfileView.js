@@ -11,9 +11,11 @@ import {
  import axios from 'axios'
  import {connect} from 'react-redux'
  import {setAuthUser, addList} from '../actions/authUserActions'
+ import List from '../components/List'
+ import AddList from '../components/AddList'
+ import profileImg from '../assets/images/profileImg.jpg'
 
 class ProfileView extends React.Component {
-
   constructor(props) {
     super(props)
     this.state = {
@@ -40,28 +42,59 @@ class ProfileView extends React.Component {
   }
 
   render() {
-    console.log('USER DEETS', this.props.user)
     const user = this.props.user
-    const lists = this.props.user.lists.map((list, i) => {
-      return (
-        <Text key={i}>{list.name}</Text>
-      )
-    })
+    const lists = user.lists.map((list, i) => <List list={list} key={i} />)
     return (
-      <ScrollView>
-        <Text>{user.username}</Text>
-        <TextInput placeholder="Create New List" onChangeText={(text) => {this.handleChangeText(text)}} />
-        <TouchableOpacity onPress={this.handleSubmit}>
-          <Text>Submit</Text>
-        </TouchableOpacity>
-        {lists}
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.userIntro}>
+          <View style={styles.userIntroWrapper}>
+            <Image source={profileImg} style={styles.profileImg}/>
+            <Text style={styles.userName}>{user.username}</Text>
+          </View>
+        </View>
+        <View style={styles.listsContainer}>
+          <Text style={styles.listHeader}>My Lists</Text>
+          {lists}
+        </View>
+        <AddList />
       </ScrollView>
     )
   }
 }
 
 const styles = StyleSheet.create({
+  container: {
 
+  },  
+  userIntro: {
+    backgroundColor: '#1c4b44',
+  },
+  userIntroWrapper: {
+    position: 'relative',
+    alignItems: 'center',
+    top: 70
+  },
+  profileImg: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 3,
+    borderColor: '#fff',
+  },
+  userName: {
+    fontFamily: 'Merriweather',
+    fontSize: 24,
+    marginTop: 10
+  },
+  listsContainer: {
+    paddingTop: 85
+  },
+  listHeader: {
+    fontSize: 20,
+    textAlign: 'center',
+    fontFamily: 'Merriweather',
+    marginBottom: 15
+  }
 })
 
 const mapStateToProps = state => ({user: state.authUser})

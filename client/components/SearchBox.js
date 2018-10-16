@@ -29,16 +29,15 @@ class SearchBox extends React.Component {
   }
 
   async handleSubmit() {
-    let url, page
+    let url
     if(this.state.page === 'searchBooks') {
       url = `https://www.googleapis.com/books/v1/volumes?q=${this.state.searchTerm}&maxResults=10`
-      page = 'BookResults'
     }
 
     try {
       const results = await axios.get(url)
       this.props.setSearchResults(results.data.items)
-      this.props.navigation.navigate(page, {searchTerm: this.state.searchTerm})
+      this.props.navigation.navigate('SearchResults', {searchTerm: this.state.searchTerm})
     }
     catch(err) {
       console.log('ERROR FINDING BOOKS', err)

@@ -3,15 +3,14 @@ import {
   StyleSheet, 
   ScrollView, 
   View, 
-  Text, 
-  Image
+  Text
 } from 'react-native'
 import {connect} from 'react-redux'
 import {setSearchResults} from '../actions/searchResultsActions'
 import BookResult from '../components/BookResult'
 import SearchBar from '../components/SearchBar'
 
-class BookResultsView extends React.Component {
+class SearchResultsView extends React.Component {
   render() {
     const searchTerm = this.props.navigation.getParam('searchTerm', '')
     const booksMapped = this.props.books.map((book, i) => (
@@ -42,4 +41,4 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => ({books: state.searchResults})
 const mapActionsToProps = {setSearchResults} 
 
-export default connect(mapStateToProps, mapActionsToProps)(BookResultsView)
+export default connect(mapStateToProps, mapActionsToProps)(SearchResultsView)
