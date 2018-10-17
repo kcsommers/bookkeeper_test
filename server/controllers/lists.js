@@ -9,7 +9,8 @@ router.post('/', (req, res) => {
     name: listData.name,
     userId: listData.userId
   }).then((list) => {
-    res.json({list})
+    list.dataValues.books = []
+    res.json({list: list.dataValues})
   }).catch((err) => {
     console.log("ERROR CREATING LIST IN DB")
     res.json({err})

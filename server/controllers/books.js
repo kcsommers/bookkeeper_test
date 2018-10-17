@@ -17,7 +17,7 @@ router.post('/', (req, res) => {
   }).then((book) => {
     db.list.findById(listData.id).then((list) => {
       list.addBook(book).then((data) => {
-        res.json({list})
+        res.json({book})
       }).catch((err) => {
         console.log("ERROR ADDING BOOK TO LIST", err)
         res.json({err})

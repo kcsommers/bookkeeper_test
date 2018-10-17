@@ -11,6 +11,7 @@ import axios from 'axios'
 import {Dropdown} from 'react-native-material-dropdown'
 import {connect} from 'react-redux'
 import {addBook} from '../actions/authUserActions'
+import missingBookCover from '../assets/images/missingBookCover.jpg'
 
 class BookResult extends React.Component {
   constructor(props) {
@@ -26,6 +27,7 @@ class BookResult extends React.Component {
 
   handleSelect(selectedList) {
     this.setState({selectedList})
+    console.log(this.state.selectedList)
   }
 
   async addToList(book) {
@@ -33,16 +35,16 @@ class BookResult extends React.Component {
       title: book.volumeInfo.title,
       authors: book.volumeInfo.authors.join(', '),
       description: book.searchInfo.textSnippet,
-      imgUrl: book.volumeInfo.imageLinks.smallThumbnail,
+      imgUrl: (book.volumeInfo.imageLinks) 
+              ? book.volumeInfo.imageLinks.smallThumbnail : '',
       banner: '',
       userId: this.props.authUser.id
     }
-    const list = this.props.authUser.lists.find((listObj) => listObj.name = this.state.selectedList)
+    const list = this.props.authUser.lists.find((listObj) => listObj.name === this.state.selectedList)
     const url = 'http://localhost:3000/books'
     const results = await axios.post(url, {bookData, list})
     if(!results.data.err) {
-      console.log(results.data)
-      this.props.addBook(bookData, results.data.list.id)
+      this.props.addBook(results.data.book, list.id)
       this.props.navigation.navigate('Profile')
     }
     else {
@@ -56,13 +58,15 @@ class BookResult extends React.Component {
     const volumeInfo = book.volumeInfo
     const authors = (volumeInfo.authors) ? volumeInfo.authors.join(', ') : ''
     const textSnippet = (book.searchInfo) ? book.searchInfo.textSnippet : ''
-    const imgSrc = (volumeInfo.imageLinks) ? volumeInfo.imageLinks.smallThumbnail : ''
+    const imgSrc = (volumeInfo.imageLinks) ? 
+    {uri: volumeInfo.imageLinks.smallThumbnail} : missingBookCover
+
     return(
       <View style={styles.bookWrapper}>
         <View style={{flexDirection: 'row', alignItems: 'flex-start'}}>
           <Image 
             style={styles.thumbnail} 
-            source={{uri: imgSrc}}
+            source={imgSrc}
             resizeMode="contain" />
           <View style={{flex: 1}}>
             <Text style={styles.title}>{volumeInfo.title}</Text>

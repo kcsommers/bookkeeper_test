@@ -3,9 +3,13 @@ import {
   StyleSheet,
   View,
   Text,
-  ScrollView
+  ScrollView,
+  TouchableOpacity
 } from 'react-native'
+import {withNavigation} from 'react-navigation'
 import Book from './Book'
+import Icon from 'react-native-vector-icons/FontAwesome'
+
 
 class List extends React.Component {
   constructor(props) {
@@ -14,11 +18,27 @@ class List extends React.Component {
 
   render() {
     const list = this.props.list
-    const books = list.books.map((book, i) => <Book book={book} key={i} />)
+    const books = (list.books && list.books.length) ?
+    list.books.map((book, i) => <Book book={book} key={i} />) :
+    ''
+    const noBooks = (!list.books || !list.books.length) ? (
+      <View style={styles.noBooksWrapper}>
+        <Text style={styles.noBooks}>No Books Just Yet</Text>
+      </View>
+    ) : ''
+
     return (
       <View style={styles.listWrapper}>
-        <Text style={styles.listName}>{list.name}</Text>
-        <ScrollView 
+        <View style={styles.listHeader}>
+          <Text style={styles.listName}>{list.name}</Text>
+          <View style={styles.listIcons}>
+            <TouchableOpacity onPress={() => {this.props.navigation.navigate('List', {list})}}>
+              <Icon name="th-list" size={25} color="#1b9ce2" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <ScrollView
           horizontal={true}
           contentContainerStyle={styles.bookSlider}
           pagingEnabled={true}
@@ -26,6 +46,7 @@ class List extends React.Component {
         >
         {books}
         </ScrollView>
+        {noBooks}
       </View>
     )
   }
@@ -33,16 +54,40 @@ class List extends React.Component {
 
 const styles = StyleSheet.create({
   listWrapper: {
-    
+
   }, 
+  listHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingLeft: 15,
+    paddingRight: 15
+  },
+  listIcons: {
+
+  },
   listName: {
     fontFamily: 'Merriweather',
     fontSize: 16,
-    marginLeft: 15
   },
   bookSlider: {
 
+  },
+  noBooksWrapper: {
+    padding: 15
+  },  
+  noBooks: {
+    backgroundColor: '#fff',
+    textAlign: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: {width: 1, height: 2},
+    shadowRadius: 2,
+    fontSize: 16,
+    fontFamily: 'Merriweather',
+    paddingTop: 20,
+    paddingBottom: 20,
+    borderRadius: 5
   }
 })
 
-export default List
+export default withNavigation(List)

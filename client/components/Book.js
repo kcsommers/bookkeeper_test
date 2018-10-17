@@ -8,6 +8,7 @@ import {
 } from 'react-native'
 import {Dimensions} from 'react-native'
 let screenWidth = Dimensions.get('window').width
+import missingBookCover from '../assets/images/missingBookCover.jpg'
 
 class Book extends React.Component {
   constructor(props) {
@@ -16,12 +17,13 @@ class Book extends React.Component {
 
   render() {
     const book = this.props.book
+    const imgSrc = (book.imgUrl) ? {uri: book.imgUrl} : missingBookCover
     return (
       <View style={styles.bookContainer}>
         <View style={styles.bookWrapper}>
           <Image 
             style={styles.bookImg} 
-            source={{uri: book.imgUrl}}
+            source={imgSrc}
             resizeMode="contain" />
           <View style={styles.bookInfo}>
             <Text style={styles.title}>{book.title}</Text>
