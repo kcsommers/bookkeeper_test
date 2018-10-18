@@ -88,7 +88,17 @@ router.get('/verify', verifyToken, (req, res) => {
           include: [db.book]
         }]
       }).then((user) => {
-        res.json({authUser: user.dataValues, verified: true});
+        db.quote.findAll({
+          where: {userId: user.id}
+        }).then((quotes) => {
+          db.note.findAll({
+            where: {userId: user.id}
+          }).then((notes) => {
+            user.dataValues.quotes = quotes;
+            user.dataValues.notes = notes;
+            res.json({authUser: user, verified: true});
+          })
+        })
       });
     }
     else {
@@ -110,7 +120,7 @@ router.post('/login', passport.authenticate('local', {session: false}), (req, re
           where: {username: req.body.username},
           include: [{
             model: db.list,
-            include: [db.book]
+            include: [db.book]  
           }]
         }).then((user) => {
           res.json({authUser: user.dataValues, token})

@@ -8,8 +8,8 @@ import {
 } from 'react-native'
 import axios from 'axios'
 import Icon from 'react-native-vector-icons/FontAwesome'
- import {addList} from '../actions/authUserActions'
- import {connect} from 'react-redux'
+import {addList} from '../actions/authUserActions'
+import {connect} from 'react-redux'
 
 class ListForm extends React.Component {
   constructor(props) {
