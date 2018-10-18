@@ -5,8 +5,6 @@ import {
   Text,
   AsyncStorage
 } from 'react-native'
-import bookLogo from '../assets/images/bookLogo.png'
-import LoadingIcon from '../components/LoadingIcon'
 
 import axios from 'axios'
 import {connect} from 'react-redux'

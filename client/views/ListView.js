@@ -3,6 +3,7 @@ import {
   View,
   Text
 } from 'react-native'
+import Book from '../components/Book'
 
 class ListView extends React.Component {
   constructor(props) {
@@ -14,9 +15,13 @@ class ListView extends React.Component {
 
   render() {
     const list = this.state.list
+    const books = list.books.map((book, i) => (
+      <Book book={book} key={i} />
+    ))
     return (
       <View>
         <Text>{list.name}</Text>
+        {books}
       </View>
     )
   }

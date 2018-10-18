@@ -7,13 +7,11 @@ import {
   TouchableOpacity
 } from 'react-native'
 import {Dimensions} from 'react-native'
+import {withNavigation} from 'react-navigation'
 let screenWidth = Dimensions.get('window').width
 import missingBookCover from '../assets/images/missingBookCover.jpg'
 
 class Book extends React.Component {
-  constructor(props) {
-    super(props)
-  }
 
   render() {
     const book = this.props.book
@@ -28,7 +26,9 @@ class Book extends React.Component {
           <View style={styles.bookInfo}>
             <Text style={styles.title}>{book.title}</Text>
             <Text style={styles.authors}>{book.authors}</Text>
-            <TouchableOpacity style={styles.btn}>
+            <TouchableOpacity style={styles.btn} onPress={() => {
+              this.props.navigation.navigate('Book', {book})
+            }}>
               <Text style={styles.btnText} >Notes</Text>
             </TouchableOpacity>
           </View>
@@ -94,4 +94,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default Book
+export default withNavigation(Book)
