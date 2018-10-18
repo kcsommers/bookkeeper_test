@@ -1,7 +1,7 @@
 export const SET_AUTH_USER = 'authUser:setAuthUser'
 export const ADD_LIST = 'authUser:addList'
 export const ADD_BOOK = 'authUser:addBook'
-export const ADD_QUOTE= 'authUser:addQuote'
+export const ADD_QUOTE = 'authUser:addQuote'
 export const ADD_NOTE = 'authUser:addNote'
 
 export const setAuthUser = (user) => ({
@@ -19,12 +19,12 @@ export const addBook = (bookData, listId) => ({
   payload: {bookData, listId}
 })
 
-export const addQuote = (bookData, listId) => ({
+export const addQuote = (quote, book) => ({
   type: ADD_QUOTE,
-  payload: {bookData, listId}
+  payload: {quote, book}
 })
 
-export const addNote = (bookData, listId) => ({
+export const addNote = (note, book) => ({
   type: ADD_NOTE,
-  payload: {bookData, listId}
+  payload: {note, book}
 })

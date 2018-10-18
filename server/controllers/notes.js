@@ -4,7 +4,17 @@ const router = express.Router();
 const db = require('../models');
 
 router.post('/', (req, res) => {
-  console.log(req.body)
+  console.log("HIT CREATE nOTE ROUTE")
+  db.note.create({
+    content: req.body.content,
+    userId: req.body.userId,
+    bookId: req.body.bookId
+  }).then((note) => {
+    res.json({note})
+  }).catch((err) => {
+    console.log('ERROR CREATING nOTE IN DB', err)
+    res.json({err})
+  });
 })
 
 

@@ -6,7 +6,6 @@ import {
   TextInput,
   TouchableOpacity
 } from 'react-native'
-import axios from 'axios'
 
 class AddForm extends React.Component {
   constructor(props) {
@@ -15,31 +14,15 @@ class AddForm extends React.Component {
       data: this.props.data
     }
     this.handleChange = this.handleChange.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
-  }
-
-  async handleSubmit() {
-    const url = this.state.data.data.url
-    let data = {}
-    this.state.data.fields.forEach((field) => {
-      data[field.field] = field.value
-    })
-    if(this.state.data.data.hasOwnProperty('ids')) {
-      this.state.data.data.ids.forEach((id) => {
-        data[id.type] = id.id
-      })
-    }
-
-    const results = await axios.post(url, data)
-    console.log(results.data)
   }
 
   handleChange(value, field) {
-    const fieldObj = this.state.data.fields.filter((obj) => obj.field === field)
+    const fieldObj = this.state.data.fields.filter((obj, i) => obj.field === field)
+    const index = this.state.data.fields.indexOf(fieldObj[0])
     const fields = this.state.data.fields.filter((obj) => obj.field !== field)
 
     fieldObj[0].value = value
-    fields.push(fieldObj[0])
+    fields.splice(index, 0, fieldObj[0])
 
     this.setState((prevState) => ({
       data: {
@@ -53,6 +36,7 @@ class AddForm extends React.Component {
     const inputs = this.state.data.fields.map((field, i) => (
       <TextInput 
         placeholder={field.placeholder}
+        placeholderTextColor="#fff"
         onChangeText={(text) => {this.handleChange(text, field.field)}}
         multiline={true}
         style={styles.input}
@@ -61,7 +45,9 @@ class AddForm extends React.Component {
     return (
       <View>
         {inputs}
-        <TouchableOpacity style={styles.submitBtn} onPress={this.handleSubmit}>
+        <TouchableOpacity 
+          style={styles.submitBtn} 
+          onPress={() => {this.props.onSubmit(this.state.data)}}>
           <Text style={styles.submitText}>Submit</Text>
         </TouchableOpacity>
       </View>
@@ -82,7 +68,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Merriweather',
     padding: 5,
     marginTop: 5,
-    marginBottom: 5
+    marginBottom: 5,
+    color: '#fff'
   },
   submitBtn: {
     backgroundColor: '#c13149',

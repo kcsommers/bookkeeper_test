@@ -7,10 +7,11 @@ import {
   Text,
 } from 'react-native'
 import Modal from 'react-native-modal'
+import axios from 'axios'
 
 import {connect} from 'react-redux'
-import addQuote from '../actions/authUserActions'
-import addNote from '../actions/authUserActions'
+import {addQuote} from '../actions/authUserActions'
+import {addNote} from '../actions/authUserActions'
 
 import Banner from '../components/Banner'
 import Button1 from '../components/Button1'
@@ -25,19 +26,46 @@ class BookView extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      book: this.props.navigation.getParam('book', {}),
       showModal: false,
-      modalFormData: null
+      modalFormData: null,
+      formType: ''
     }
     this.toggleModal = this.toggleModal.bind(this)
     this.setFormData = this.setFormData.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
   }
 
   toggleModal() {
-    this.setState({showModa: !this.state.showModal})
+    this.setState({showModal: !this.state.showModal})
   }
 
-  setFormData(type) {
+  async handleSubmit(formData) {
+    this.toggleModal()
+    const book = this.props.navigation.getParam('book', {})
+    const url = formData.data.url
+    let postData = {}
+    formData.fields.forEach((field) => {
+      postData[field.field] = field.value
+    })
+    if(formData.data.hasOwnProperty('ids')) {
+      formData.data.ids.forEach((id) => {
+        postData[id.type] = id.id
+      })
+    }
+
+    const results = await axios.post(url, postData)
+    console.log(results.data)
+    if(!results.data.err) {
+      if(this.state.formType === 'quote') {
+        this.props.addQuote(results.data.quote, book)
+      }
+      else if(this.state.formType === 'note') {
+        this.props.addNote(results.data.note, book)
+      }
+    }
+  }
+
+  setFormData(type, book) {
     let fields = []
     let data = {}
     let url = ''
@@ -70,25 +98,25 @@ class BookView extends React.Component {
       },
       {
         type: 'bookId',
-        id: this.state.book.id
+        id: book.id
       }],
       url: url,
       method: 'post'
     }
-    this.setState({modalFormData: data, showModal: true})
+    this.setState({modalFormData: data, showModal: true, formType: type})
   }
 
   render() {
-    const book = this.state.book
+    const book = this.props.navigation.getParam('book', {})
     const imgSrc = (book.imgUrl) ? {uri: book.imgUrl} : missingBookCover
 
-    const quotes = (this.props.user.quotes.length) ? 
-    this.props.user.quotes.map((quote, i) => <Quote quote={quote} key={i} />)
+    const quotes = (book.quotes.length) ? 
+    book.quotes.map((quote, i) => <Quote quote={quote} key={i} />)
     :
     <Text>No Quotes Just Yet</Text>
 
-    const notes = (this.props.user.notes.length) ? 
-    this.props.user.notes.map((note, i) => <Note note={note} key={i} />)
+    const notes = (book.notes.length) ? 
+    book.notes.map((note, i) => <Note note={note} key={i} />)
     :
     <Text>No Notes Just Yet</Text>
 
@@ -112,11 +140,11 @@ class BookView extends React.Component {
             <Button1 
               color="#71a7a9" 
               text="Add Note" 
-              onPress={() => this.setFormData('note')} />
+              onPress={() => this.setFormData('note', book)} />
             <Button1 
               color="#71a7a9" 
               text="Add Quote"
-              onPress={() => this.setFormData('quote')} />
+              onPress={() => this.setFormData('quote', book)} />
             <Button1 color="#71a7a9" text="Back to List" />
           </View>
           <View style={styles.quotesWrapper}>
@@ -129,7 +157,9 @@ class BookView extends React.Component {
             isVisible={this.state.showModal} 
             onBackdropPress={this.toggleModal}>
 
-            <AddForm data={this.state.modalFormData} />
+            <AddForm 
+              data={this.state.modalFormData} 
+              onSubmit={(data) => {this.handleSubmit(data)}} />
 
           </Modal>
         </View>

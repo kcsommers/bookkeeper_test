@@ -94,8 +94,34 @@ router.get('/verify', verifyToken, (req, res) => {
           db.note.findAll({
             where: {userId: user.id}
           }).then((notes) => {
-            user.dataValues.quotes = quotes;
-            user.dataValues.notes = notes;
+            console.log(user.dataValues)
+            user.dataValues.lists.forEach((list) => {
+              list.books.forEach((book) => {
+                book.dataValues.notes = [];
+                book.dataValues.quotes = [];
+              })
+            })
+
+            notes.forEach((note) => {
+              user.dataValues.lists.forEach((list) => {
+                list.books.forEach((book) => {
+                  if(book.id === note.bookId) {
+                    book.dataValues.notes.push(note)
+                  }
+                })
+              })  
+            })
+
+            quotes.forEach((quote) => {
+              user.dataValues.lists.forEach((list) => {
+                list.books.forEach((book) => {
+                  if(book.id === quote.bookId) {
+                    book.dataValues.quotes.push(quote)
+                  }
+                })
+              })  
+            })
+
             res.json({authUser: user, verified: true});
           })
         })
