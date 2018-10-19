@@ -43,7 +43,7 @@ class ProfileView extends React.Component {
 
   render() {
     const user = this.props.user
-    const lists = user.lists.map((list, i) => <List list={list} key={i} />)
+    const lists = this.props.lists.map((list, i) => <List list={list} key={i} />)
     return (
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.userIntro}>
@@ -97,6 +97,6 @@ const styles = StyleSheet.create({
   }
 })
 
-const mapStateToProps = state => ({user: state.authUser})
+const mapStateToProps = state => ({user: state.authUser, lists: state.lists})
 const mapActionsToProps = {setAuthUser, addList} 
 export default connect(mapStateToProps, mapActionsToProps)(ProfileView)

@@ -76,56 +76,39 @@ const verifyToken = (req, res, next) => {
   }
 };
 
+const getUserData = (user) => {
+  return new Promise((resolve, reject) => {
+    db.list.findAll({
+      where: {userId: user.id},
+      include: {
+        model: db.book,
+        include: [db.quote, db.note]
+      }
+    }).then((lists) => {
+      resolve({lists})
+    }).catch((err) => {
+      console.log('ERROR GETTING USER DATA', err)
+      reject({err})
+    })
+  })
+}
+
 // TOKEN VERIFICATION ROUTE
 router.get('/verify', verifyToken, (req, res) => {
   console.log('HIT VERIFY TOKEN ROUTE')
   jwt.verify(req.token, process.env.AUTH_SECRET, (err, authData) => {
     if(!err) {
       db.user.find({
-        where: {username: authData.user},
-        include: [{
-          model: db.list,
-          include: [db.book]
-        }]
-      }).then((user) => {
-        db.quote.findAll({
-          where: {userId: user.id}
-        }).then((quotes) => {
-          db.note.findAll({
-            where: {userId: user.id}
-          }).then((notes) => {
-            console.log(user.dataValues)
-            user.dataValues.lists.forEach((list) => {
-              list.books.forEach((book) => {
-                book.dataValues.notes = [];
-                book.dataValues.quotes = [];
-              })
-            })
-
-            notes.forEach((note) => {
-              user.dataValues.lists.forEach((list) => {
-                list.books.forEach((book) => {
-                  if(book.id === note.bookId) {
-                    book.dataValues.notes.push(note)
-                  }
-                })
-              })  
-            })
-
-            quotes.forEach((quote) => {
-              user.dataValues.lists.forEach((list) => {
-                list.books.forEach((book) => {
-                  if(book.id === quote.bookId) {
-                    book.dataValues.quotes.push(quote)
-                  }
-                })
-              })  
-            })
-
-            res.json({authUser: user, verified: true});
-          })
+        where: {username: authData.user}
+      }).then((authUser) => {
+        getUserData(authUser).then((data) => {
+          const lists = data.lists;
+          res.json({authUser, lists, verified: true});
         })
-      });
+      }).catch((err) => {
+        console.log('ERROR FINDING USER IN DB', err)
+        res.json({err, verified: false});
+      })
     }
     else {
       res.json({err, verified: false});
@@ -143,13 +126,16 @@ router.post('/login', passport.authenticate('local', {session: false}), (req, re
     (err, token) => {
       if(!err) {
         db.user.find({
-          where: {username: req.body.username},
-          include: [{
-            model: db.list,
-            include: [db.book]  
-          }]
-        }).then((user) => {
-          res.json({authUser: user.dataValues, token})
+          where: {username: req.body.username}
+        }).then((authUser) => {
+          console.log('AUTH,', authUser)
+          getUserData(authUser).then((data) => {
+            const lists = data.lists;
+            res.json({authUser, lists, token});
+          })
+        }).catch((err) => {
+          console.log('ERROR FINDING USER IN DB', err)
+          res.json({err});
         })
       }
       else {

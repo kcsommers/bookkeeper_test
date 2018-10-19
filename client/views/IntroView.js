@@ -9,17 +9,12 @@ import {
 import axios from 'axios'
 import {connect} from 'react-redux'
 import {setAuthUser} from '../actions/authUserActions'
-import {orientationChange} from '../actions/orientationActions'
+import {setLists} from '../actions/listsActions'
 
 class IntroView extends React.Component {
   constructor(props) {
     super(props)
     this.fetchToken = this.fetchToken.bind(this)
-    this.setAuthUser = this.setAuthUser.bind(this)
-  }
-
-  setAuthUser(user) {
-    this.props.setAuthUser(user)
   }
 
   async verifyToken(token) {
@@ -31,7 +26,9 @@ class IntroView extends React.Component {
       }
     })
     if(verified.data.verified) {
-      this.setAuthUser(verified.data.authUser)
+      this.props.setAuthUser(verified.data.authUser)
+      this.props.setLists(verified.data.lists)
+      
       setTimeout(() => {
         this.props.navigation.navigate('App')
       }, 1000)
@@ -95,6 +92,6 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => state
 
-const mapActionsToProps = {setAuthUser, orientationChange} 
+const mapActionsToProps = {setAuthUser, setLists} 
 
 export default connect(mapStateToProps, mapActionsToProps)(IntroView)

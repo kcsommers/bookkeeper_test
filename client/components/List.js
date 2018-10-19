@@ -19,7 +19,7 @@ class List extends React.Component {
   render() {
     const list = this.props.list
     const books = (list.books && list.books.length) ?
-    list.books.map((book, i) => <Book book={book} key={i} />) :
+    list.books.map((book, i) => <Book book={book} list={list} key={i} />) :
     ''
     const noBooks = (!list.books || !list.books.length) ? (
       <View style={styles.noBooksWrapper}>

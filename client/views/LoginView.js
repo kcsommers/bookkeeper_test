@@ -12,6 +12,7 @@ import axios from 'axios'
 
 import {connect} from 'react-redux'
 import {setAuthUser} from '../actions/authUserActions'
+import {setLists} from '../actions/listsActions'
 
 class LoginView extends React.Component {
   constructor(props) {
@@ -51,6 +52,8 @@ class LoginView extends React.Component {
     const results = await axios.post(url, payload)
     if(results.data.token) {
       this.props.setAuthUser(results.data.authUser)
+      this.props.setLists(results.data.lists)
+
       this.setToken(results.data.token)
       this.props.navigation.navigate('Search')
     }
@@ -138,5 +141,5 @@ const styles = StyleSheet.create({
 })
 
 const mapStateToProps = state => state
-const mapActionsToProps = {setAuthUser} 
+const mapActionsToProps = {setAuthUser, setLists} 
 export default connect(mapStateToProps, mapActionsToProps)(LoginView)
