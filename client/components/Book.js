@@ -15,6 +15,7 @@ class Book extends React.Component {
 
   render() {
     const book = this.props.book
+    const list = this.props.list
     const imgSrc = (book.imgUrl) ? {uri: book.imgUrl} : missingBookCover
     return (
       <View style={styles.bookContainer}>
@@ -27,7 +28,7 @@ class Book extends React.Component {
             <Text style={styles.title}>{book.title}</Text>
             <Text style={styles.authors}>{book.authors}</Text>
             <TouchableOpacity style={styles.btn} onPress={() => {
-              this.props.navigation.navigate('Book', {book})
+              this.props.navigation.navigate('Book', {bookId: book.id, listId: list.id})
             }}>
               <Text style={styles.btnText} >Notes</Text>
             </TouchableOpacity>

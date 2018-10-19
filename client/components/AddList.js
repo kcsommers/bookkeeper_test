@@ -2,12 +2,15 @@ import React from 'react'
 import {
   StyleSheet,
   View,
-  Text,
   TouchableOpacity
 } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import Modal from 'react-native-modal'
-import ListForm from './ListForm'
+import Modal from 'react-native-modal' 
+
+import {addList} from '../actions/listsActions'
+import {connect} from 'react-redux'
+
+import AddForm from './AddForm'
 
 class AddList extends React.Component {
   constructor(props) {
@@ -16,10 +19,19 @@ class AddList extends React.Component {
       modalVisible: false
     }
     this.toggleModal = this.toggleModal.bind(this)
+    this.updateStore = this.updateStore.bind(this)
   }
 
   toggleModal() {
     this.setState({modalVisible: !this.state.modalVisible})
+  }
+
+  updateStore(data) {
+    if(!data.err) {
+      this.props.addList(data.list)
+    }
+
+    this.toggleModal()
   }
 
   render() {
@@ -33,10 +45,27 @@ class AddList extends React.Component {
           onBackdropPress={this.toggleModal}
         >
           <View style={styles.modalWrapper}>
-            <ListForm 
-              listData={{name: '', description: ''}} 
-              toggleModal={this.toggleModal}
-              isNew={true} />
+            <AddForm
+              onSubmit={(data) => {this.updateStore(data)}} 
+              data={{
+                fields: [{
+                  field: 'name',
+                  placeholder: 'List Name',
+                  value: ''
+                }, {
+                  field: 'description',
+                  placeholder: 'List Description',
+                  value: ''
+                }],
+                data: {
+                  ids: [{
+                    type: 'userId',
+                    id: this.props.user.id
+                  }],
+                  url: 'http://localhost:3000/lists',
+                  method: 'post'
+                }
+              }} />
           </View>
         </Modal>
       </View>
@@ -65,4 +94,7 @@ const styles = StyleSheet.create({
   }
 })
 
-export default AddList
+const mapStateToProps = state => ({user: state.authUser})
+const mapActionsToProps = {addList} 
+
+export default connect(mapStateToProps, mapActionsToProps)(AddList)

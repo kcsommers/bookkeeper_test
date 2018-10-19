@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity
 } from 'react-native'
+import axios from 'axios'
 
 class AddForm extends React.Component {
   constructor(props) {
@@ -16,8 +17,23 @@ class AddForm extends React.Component {
     this.handleChange = this.handleChange.bind(this)
   }
 
+  async handleSubmit(formData) {
+    const url = formData.data.url
+    let postData = {}
+    formData.fields.forEach((field) => {
+      postData[field.field] = field.value
+    })
+    if(formData.data.hasOwnProperty('ids')) {
+      formData.data.ids.forEach((id) => {
+        postData[id.type] = id.id
+      })
+    }
+    const results = await axios.post(url, postData)
+    return results.data
+  }
+
   handleChange(value, field) {
-    const fieldObj = this.state.data.fields.filter((obj, i) => obj.field === field)
+    const fieldObj = this.state.data.fields.filter((obj) => obj.field === field)
     const index = this.state.data.fields.indexOf(fieldObj[0])
     const fields = this.state.data.fields.filter((obj) => obj.field !== field)
 
@@ -47,7 +63,11 @@ class AddForm extends React.Component {
         {inputs}
         <TouchableOpacity 
           style={styles.submitBtn} 
-          onPress={() => {this.props.onSubmit(this.state.data)}}>
+          onPress={() => {
+            this.handleSubmit(this.state.data).then((data) => {
+              this.props.onSubmit(data)
+            })
+          }}>
           <Text style={styles.submitText}>Submit</Text>
         </TouchableOpacity>
       </View>

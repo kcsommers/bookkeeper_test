@@ -4,14 +4,13 @@ import {
   View,
   ScrollView,
   Image,
-  Text,
+  Text
 } from 'react-native'
 import Modal from 'react-native-modal'
-import axios from 'axios'
 
 import {connect} from 'react-redux'
-import {addQuote} from '../actions/authUserActions'
-import {addNote} from '../actions/authUserActions'
+import {addQuote} from '../actions/listsActions'
+import {addNote} from '../actions/listsActions'
 
 import Banner from '../components/Banner'
 import Button1 from '../components/Button1'
@@ -28,41 +27,31 @@ class BookView extends React.Component {
     this.state = {
       showModal: false,
       modalFormData: null,
-      formType: ''
+      formType: '',
+      book: null
     }
     this.toggleModal = this.toggleModal.bind(this)
     this.setFormData = this.setFormData.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
+    this.updateoStore = this.updateStore.bind(this)
+    this.getBookFromStore = this.getBookFromStore.bind(this)
   }
 
   toggleModal() {
     this.setState({showModal: !this.state.showModal})
   }
 
-  async handleSubmit(formData) {
-    this.toggleModal()
-    const book = this.props.navigation.getParam('book', {})
-    const url = formData.data.url
-    let postData = {}
-    formData.fields.forEach((field) => {
-      postData[field.field] = field.value
-    })
-    if(formData.data.hasOwnProperty('ids')) {
-      formData.data.ids.forEach((id) => {
-        postData[id.type] = id.id
-      })
-    }
-
-    const results = await axios.post(url, postData)
-    console.log(results.data)
-    if(!results.data.err) {
+  updateStore(data) {
+    const bookId = this.props.navigation.getParam('bookId')
+    const listId = this.props.navigation.getParam('listId')  
+    if(!data.err) {
       if(this.state.formType === 'quote') {
-        this.props.addQuote(results.data.quote, book)
+        this.props.addQuote(data.quote, bookId, listId)
       }
       else if(this.state.formType === 'note') {
-        this.props.addNote(results.data.note, book)
+        this.props.addNote(data.note, bookId, listId)
       }
     }
+    this.toggleModal()
   }
 
   setFormData(type, book) {
@@ -106,121 +95,97 @@ class BookView extends React.Component {
     this.setState({modalFormData: data, showModal: true, formType: type})
   }
 
+  getBookFromStore(bookId, listId) {
+    const listIndex = this.props.lists.findIndex((list) => list.id === listId)
+    const bookIndex = this.props.lists[listIndex].books.findIndex((book) => book.id === bookId)
+    
+    return this.props.lists[listIndex].books[bookIndex]
+  }
+
   render() {
-    const book = this.props.navigation.getParam('book', {})
-    const imgSrc = (book.imgUrl) ? {uri: book.imgUrl} : missingBookCover
+    let book = this.getBookFromStore(this.props.navigation.getParam('bookId'), this.props.navigation.getParam('listId'))
+    let title = (book) ? book.title : ''
+    let authors = (book) ? book.authors : ''
+    let description = (book) ? book.description : ''
+    let imgSrc = (book && book.imgUrl) ? {uri: book.imgUrl} : missingBookCover
 
-    const quotes = (book.quotes.length) ? 
-    book.quotes.map((quote, i) => <Quote quote={quote} key={i} />)
-    :
-    <Text>No Quotes Just Yet</Text>
+    let quotes = (book.quotes.length) ? 
+    book.quotes.map((quote, i) => <Quote quote={quote} key={i} />) 
+    : 
+    <Text>No quotes just yet</Text>
 
-    const notes = (book.notes.length) ? 
+    let notes = (book.notes.length) ? 
     book.notes.map((note, i) => <Note note={note} key={i} />)
-    :
-    <Text>No Notes Just Yet</Text>
+    : 
+    <Text>No notes just yet</Text>
 
     return (
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.bannerWrapper}>
-          <Banner image={bg7} />
-        </View>
-        <View style={styles.mainWrapper}>
-          <Image 
-            resizeMode="contain"
-            source={imgSrc}
-            style={styles.bookImg}
-          />
-          <View style={styles.bookInfo}>
-            <Text style={styles.title}>{book.title}</Text>
-            <Text style={styles.authors}>{book.authors}</Text>
-            <Text style={styles.description}>{book.description}</Text>
-          </View>
-          <View style={styles.btnsWrapper}>
-            <Button1 
-              color="#71a7a9" 
-              text="Add Note" 
-              onPress={() => this.setFormData('note', book)} />
-            <Button1 
-              color="#71a7a9" 
-              text="Add Quote"
-              onPress={() => this.setFormData('quote', book)} />
-            <Button1 color="#71a7a9" text="Back to List" />
-          </View>
-          <View style={styles.quotesWrapper}>
-            {quotes}
-          </View>
-          <View style={styles.notesWrapper}>
-            {notes}
-          </View>
-          <Modal 
-            isVisible={this.state.showModal} 
-            onBackdropPress={this.toggleModal}>
+        <Banner image={bg7} />
 
-            <AddForm 
-              data={this.state.modalFormData} 
-              onSubmit={(data) => {this.handleSubmit(data)}} />
-
-          </Modal>
+        <View style={styles.bookDetails}>
+          <Image source={imgSrc} style={styles.bookImg} />
+          <Text style={[styles.title, styles.text]}>{title}</Text>
+          <Text style={[styles.authors, styles.text]}>{authors}</Text>
+          <Text style={[styles.description, styles.text]}>{description}</Text>
         </View>
+
+        <View style={styles.btnsWrapper}>
+          <Button1 
+            color='#71a7a9' 
+            text='Add Quote'
+            onPress={() => {this.setFormData('quote', book)}} />
+          
+          <Button1 
+            color='#71a7a9' 
+            text='Add Note'
+            onPress={() => {this.setFormData('note', book)}} />
+        </View>
+
+        <View style={styles.notesWrapper}>
+          {quotes}
+          {notes}
+        </View>
+
+        <Modal 
+          isVisible={this.state.showModal}
+          onBackdropPress={this.toggleModal}>
+
+          <AddForm 
+            data={this.state.modalFormData}
+            onSubmit={(data) => {this.updateStore(data)}} />
+
+        </Modal>
       </ScrollView>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-  },
-  mainWrapper: {
-    paddingLeft: 15,
-    paddingRight: 15
+  bookDetails: {
+    alignItems: 'center'
+  },  
+  text: {
+    fontFamily: 'Merriweather',
+    textAlign: 'center'
   },
   bookImg: {
     width: 130,
     height: 200,
-    marginLeft: 'auto',
-    marginRight: 'auto',
-    marginTop: -150,
-    marginBottom: 15,
-    borderWidth: 2,
-    borderColor: '#fff'
-  },
-  title: {
-    fontFamily: 'Merriweather',
-    textAlign: 'center',
-    fontSize: 24
-  },
-  authors: {
-    fontFamily: 'Merriweather',
-    textAlign: 'center',
-    fontSize: 20,
-    fontStyle: 'italic',
-    paddingTop: 10,
-    paddingBottom: 10
-  },
-  description: {
-    fontFamily: 'Merriweather',
-    textAlign: 'center',
-    fontSize: 18
+    marginTop: -150
   },
   btnsWrapper: {
-    paddingTop: 15,
     alignItems: 'center'
   },
-  btn: {
-    marginBottom: 15
-  },
   notesWrapper: {
-
-  },
-  quotesWrapper: {
-
+    alignItems: 'center'
   }
 })
 
 const mapStateToProps = (state) => {
   return {
-    user: state.authUser
+    user: state.authUser,
+    lists: state.lists
   }
 }
 
