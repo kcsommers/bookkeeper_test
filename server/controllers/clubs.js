@@ -22,7 +22,7 @@ router.post('/', (req, res) => {
           res.json({club})
         }).catch((err) => {
           console.log('ERROR ADDING BOOK TO CLUB', err)
-        })
+        });
       }).catch((err) => {
         console.log('ERROR FINDING BOOK', err) 
         res.json({err})
@@ -57,12 +57,30 @@ router.post('/join', (req, res) => {
     }).catch((err) => {
       console.log('ERROR FINDING CLUB', err)
       res.json({err})
-    })
+    });
   }).catch((err) => {
     console.log('ERROR JOINING CLUB', err)
     res.json({err})
+  });
+});
+
+router.get('/', (req, res) => {
+  const q = req.query.search_term;
+  db.club.findAll({
+    where: {
+      $or: [
+        {name: {like: '%' + q + '%'}},
+        {description: {like: '%' + q + '%'}},
+        {topic: {like: '%' + q + '%'}}
+      ]
+    }
+  }).then((clubs) => {
+    res.json({items: clubs})
+  }).catch((err) => {
+    console.log('ERROR FINDING CLUBS', err)
+    res.json({err})
   })
-})
+});
 
 
 module.exports = {router}

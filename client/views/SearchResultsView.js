@@ -8,14 +8,21 @@ import {
 import {connect} from 'react-redux'
 import {setSearchResults} from '../actions/searchResultsActions'
 import BookResult from '../components/BookResult'
+import Club from '../components/Club'
 import SearchBar from '../components/SearchBar'
 
 class SearchResultsView extends React.Component {
   render() {
     const searchTerm = this.props.navigation.getParam('searchTerm', '')
-    const booksMapped = this.props.books.map((book, i) => (
-      <BookResult book={book} key={i} />
-    ))
+    const page = this.props.navigation.getParam('page', '')
+    const resultsMapped = this.props.results.map((result, i) => {
+      if(page === 'searchBooks') {
+        return <BookResult book={result} key={i} />
+      }
+      else if(page === 'searchClubs') {
+        return <Club club={result} key={i} />
+      }
+    })
 
     return(
       <ScrollView>
@@ -23,7 +30,7 @@ class SearchResultsView extends React.Component {
         <View>
           <Text style={styles.searchTerm}>Showing results for {searchTerm}</Text>
         </View>
-        {booksMapped}
+        {resultsMapped}
       </ScrollView>
     )
   }
@@ -38,7 +45,7 @@ const styles = StyleSheet.create({
   }
 })
 
-const mapStateToProps = (state) => ({books: state.searchResults})
+const mapStateToProps = (state) => ({results: state.searchResults})
 const mapActionsToProps = {setSearchResults} 
 
 export default connect(mapStateToProps, mapActionsToProps)(SearchResultsView)
