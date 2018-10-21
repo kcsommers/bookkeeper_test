@@ -18,24 +18,26 @@ class AddForm extends React.Component {
   }
 
   async handleSubmit(formData) {
-    const url = formData.data.url
+    const url = formData.httpData.url
     let postData = {}
-    formData.fields.forEach((field) => {
+    formData.formFields.forEach((field) => {
       postData[field.field] = field.value
     })
-    if(formData.data.hasOwnProperty('ids')) {
-      formData.data.ids.forEach((id) => {
-        postData[id.type] = id.id
-      })
-    }
+
+    formData.modelFields.forEach((item) => {
+      postData[item.type] = item.value
+    })
+
+    postData.miscData = formData.miscData
+
     const results = await axios.post(url, postData)
     return results.data
   }
 
   handleChange(value, field) {
-    const fieldObj = this.state.data.fields.filter((obj) => obj.field === field)
-    const index = this.state.data.fields.indexOf(fieldObj[0])
-    const fields = this.state.data.fields.filter((obj) => obj.field !== field)
+    const fieldObj = this.state.data.formFields.filter((obj) => obj.field === field)
+    const index = this.state.data.formFields.indexOf(fieldObj[0])
+    const fields = this.state.data.formFields.filter((obj) => obj.field !== field)
 
     fieldObj[0].value = value
     fields.splice(index, 0, fieldObj[0])
@@ -49,14 +51,14 @@ class AddForm extends React.Component {
   } 
 
   render() {
-    const inputs = this.state.data.fields.map((field, i) => (
+    const inputs = this.state.data.formFields.map((field, i) => (
       <TextInput 
         placeholder={field.placeholder}
-        placeholderTextColor="#fff"
         onChangeText={(text) => {this.handleChange(text, field.field)}}
         multiline={true}
         style={styles.input}
-        key={i} />
+        key={i}
+        value={field.value} />
     ))
     return (
       <View>

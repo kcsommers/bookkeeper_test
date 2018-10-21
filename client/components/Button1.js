@@ -11,7 +11,7 @@ const Button1 = (props) => {
     <TouchableOpacity 
       style={[styles.btn, {backgroundColor: props.color}]}
       onPress={props.onPress}>
-      <Text style={styles.btnText}>{props.text}</Text>
+      <Text style={[styles.btnText, {color: props.textColor}]}>{props.text}</Text>
     </TouchableOpacity>
   )
 }
@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
   btn: {
     paddingTop: 15,
     paddingBottom: 15,
-    width: 300,
+    width: '85%',
     borderRadius: 5,
     marginBottom: 10,
     shadowColor: '#000',
@@ -29,7 +29,6 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
   },
   btnText: {
-    color: '#fff',
     textAlign: 'center',
     fontSize: 16
   }

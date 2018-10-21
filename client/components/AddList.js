@@ -48,7 +48,7 @@ class AddList extends React.Component {
             <AddForm
               onSubmit={(data) => {this.updateStore(data)}} 
               data={{
-                fields: [{
+                formFields: [{
                   field: 'name',
                   placeholder: 'List Name',
                   value: ''
@@ -57,11 +57,13 @@ class AddList extends React.Component {
                   placeholder: 'List Description',
                   value: ''
                 }],
-                data: {
-                  ids: [{
+                modelFields: [
+                  {
                     type: 'userId',
-                    id: this.props.user.id
-                  }],
+                    value: this.props.user.id
+                  }
+                ],
+                httpData: {
                   url: 'http://localhost:3000/lists',
                   method: 'post'
                 }
@@ -75,7 +77,8 @@ class AddList extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 15
+    paddingTop: 15,
+    paddingBottom: 15
   },
   wrapper: {
     borderWidth: 1,

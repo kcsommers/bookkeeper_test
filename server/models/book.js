@@ -11,9 +11,10 @@ module.exports = (sequelize, DataTypes) => {
   book.associate = function(models) {
     // associations can be defined here
     models.book.belongsTo(models.user);
-    models.book.belongsToMany(models.list, {through: 'listsBooks'});
     models.book.hasMany(models.quote);
     models.book.hasMany(models.note);
+    models.book.belongsToMany(models.list, {through: 'listsBooks'});
+    models.book.belongsToMany(models.club, {through: 'clubsBooks'});
   };
   return book;
 };

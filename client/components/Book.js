@@ -8,8 +8,11 @@ import {
 } from 'react-native'
 import {Dimensions} from 'react-native'
 import {withNavigation} from 'react-navigation'
-let screenWidth = Dimensions.get('window').width
 import missingBookCover from '../assets/images/missingBookCover.jpg'
+
+import OptionsBtn from './OptionsBtn'
+
+let screenWidth = Dimensions.get('window').width
 
 class Book extends React.Component {
 
@@ -20,18 +23,18 @@ class Book extends React.Component {
     return (
       <View style={styles.bookContainer}>
         <View style={styles.bookWrapper}>
-          <Image 
-            style={styles.bookImg} 
-            source={imgSrc}
-            resizeMode="contain" />
+          <TouchableOpacity onPress={() => {
+            this.props.navigation.navigate('Book', {bookId: book.id, listId: list.id})
+          }}>
+            <Image 
+              style={styles.bookImg} 
+              source={imgSrc}
+              resizeMode="contain" />
+          </TouchableOpacity>
           <View style={styles.bookInfo}>
             <Text style={styles.title}>{book.title}</Text>
             <Text style={styles.authors}>{book.authors}</Text>
-            <TouchableOpacity style={styles.btn} onPress={() => {
-              this.props.navigation.navigate('Book', {bookId: book.id, listId: list.id})
-            }}>
-              <Text style={styles.btnText} >Notes</Text>
-            </TouchableOpacity>
+            <OptionsBtn book={book} list={list} />
           </View>
         </View>
       </View>
@@ -42,7 +45,8 @@ class Book extends React.Component {
 const styles = StyleSheet.create({
   bookContainer: {
     width: screenWidth,
-    padding: 15
+    paddingTop: 15,
+    paddingBottom: 15
   },
   bookWrapper: {
     flexDirection: 'row',

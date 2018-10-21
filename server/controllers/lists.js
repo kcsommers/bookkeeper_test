@@ -4,6 +4,7 @@ const router = express.Router();
 const db = require('../models');
 
 router.post('/', (req, res) => {
+  console.log('HIT CREATE LIST ROUTE')
   const listData = req.body
   db.list.create({
     name: listData.name,

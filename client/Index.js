@@ -5,12 +5,14 @@ import {Provider} from 'react-redux'
 import {Font} from 'expo'
 import authUserReducer from './reducers/authUserReducer'
 import listsReducer from './reducers/listsReducer'
+import clubsReducer from './reducers/clubsReducer'
 import searchResultsReducer from './reducers/searchResultsReducer'
 import orientationReducer from './reducers/orientationReducer'
 
 const allReducers = combineReducers({
   authUser: authUserReducer,
   lists: listsReducer,
+  clubs: clubsReducer,
   searchResults: searchResultsReducer,
   orientation: orientationReducer
 })

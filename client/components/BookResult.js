@@ -17,7 +17,7 @@ class BookResult extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      selectedList: this.props.authUser.lists[0].name,
+      selectedList: this.props.lists[0].name,
       message: ''
     }
 
@@ -40,7 +40,7 @@ class BookResult extends React.Component {
       banner: '',
       userId: this.props.authUser.id
     }
-    const list = this.props.authUser.lists.find((listObj) => listObj.name === this.state.selectedList)
+    const list = this.props.lists.find((listObj) => listObj.name === this.state.selectedList)
     const url = 'http://localhost:3000/books'
     const results = await axios.post(url, {bookData, list})
     if(!results.data.err) {
@@ -53,7 +53,7 @@ class BookResult extends React.Component {
   }
 
   render() {
-    let data = this.props.authUser.lists.map(list => ({value: list.name}))
+    let data = this.props.lists.map(list => ({value: list.name}))
     const book = this.props.book
     const volumeInfo = book.volumeInfo
     const authors = (volumeInfo.authors) ? volumeInfo.authors.join(', ') : ''
@@ -133,6 +133,6 @@ const styles = StyleSheet.create({
   }
 })
 
-const mapStateToProps = (state) => ({authUser: state.authUser})
+const mapStateToProps = (state) => ({authUser: state.authUser, lists: state.lists})
 const mapActionsToProps = {addBook}
 export default withNavigation(connect(mapStateToProps, mapActionsToProps)(BookResult))

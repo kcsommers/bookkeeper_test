@@ -89,9 +89,9 @@ const getUserData = (user) => {
     }).catch((err) => {
       console.log('ERROR GETTING USER DATA', err)
       reject({err})
-    })
-  })
-}
+    });
+  });
+};
 
 // TOKEN VERIFICATION ROUTE
 router.get('/verify', verifyToken, (req, res) => {
@@ -99,7 +99,11 @@ router.get('/verify', verifyToken, (req, res) => {
   jwt.verify(req.token, process.env.AUTH_SECRET, (err, authData) => {
     if(!err) {
       db.user.find({
-        where: {username: authData.user}
+        where: {username: authData.user},
+        include: [{
+          model: db.club,
+          include: [db.user, db.post]
+        }]
       }).then((authUser) => {
         getUserData(authUser).then((data) => {
           const lists = data.lists;
@@ -113,7 +117,7 @@ router.get('/verify', verifyToken, (req, res) => {
     else {
       res.json({err, verified: false});
     }
-  })
+  });
 });
 
 // LOGIN ROUTE

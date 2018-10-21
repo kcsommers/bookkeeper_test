@@ -16,7 +16,7 @@ class ListView extends React.Component {
   render() {
     const list = this.state.list
     const books = list.books.map((book, i) => (
-      <Book book={book} key={i} />
+      <Book book={book} list={list} key={i} />
     ))
     return (
       <View>

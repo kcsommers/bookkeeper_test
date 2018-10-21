@@ -10,6 +10,7 @@ import axios from 'axios'
 import {connect} from 'react-redux'
 import {setAuthUser} from '../actions/authUserActions'
 import {setLists} from '../actions/listsActions'
+import {setClubs} from '../actions/clubsActions'
 
 class IntroView extends React.Component {
   constructor(props) {
@@ -28,6 +29,7 @@ class IntroView extends React.Component {
     if(verified.data.verified) {
       this.props.setAuthUser(verified.data.authUser)
       this.props.setLists(verified.data.lists)
+      this.props.setClubs(verified.data.authUser.clubs)
       
       setTimeout(() => {
         this.props.navigation.navigate('App')
@@ -92,6 +94,6 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => state
 
-const mapActionsToProps = {setAuthUser, setLists} 
+const mapActionsToProps = {setAuthUser, setLists, setClubs} 
 
 export default connect(mapStateToProps, mapActionsToProps)(IntroView)

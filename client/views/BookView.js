@@ -21,6 +21,8 @@ import AddForm from '../components/AddForm'
 import missingBookCover from '../assets/images/missingBookCover.jpg'
 import bg7 from '../assets/images/page_backgrounds/bg7.jpg'
 
+import {setFormData} from '../formFunctions.js'
+
 class BookView extends React.Component {
   constructor(props) {
     super(props)
@@ -55,44 +57,12 @@ class BookView extends React.Component {
   }
 
   setFormData(type, book) {
-    let fields = []
-    let data = {}
-    let url = ''
-    if(type === 'note') {
-      fields.push({
-        field: 'content',
-        placeholder: 'Note',
-        value: ''
-      })
-      url = 'http://localhost:3000/notes'
+    const data = {
+      user: this.props.user,
+      book: book
     }
-    else if(type === 'quote') {
-      fields.push({
-        field: 'content',
-        placeholder: 'Quote',
-        value: ''
-      }, {
-        field: 'page',
-        placeholder: 'Page',
-        value: ''
-      })
-      url = 'http://localhost:3000/quotes'
-    }
-
-    data.fields = fields
-    data.data = {
-      ids: [{
-        type: 'userId',
-        id: this.props.user.id
-      },
-      {
-        type: 'bookId',
-        id: book.id
-      }],
-      url: url,
-      method: 'post'
-    }
-    this.setState({modalFormData: data, showModal: true, formType: type})
+    const formData = setFormData(type, data)
+    this.setState({modalFormData: formData, showModal: true, formType: type})
   }
 
   getBookFromStore(bookId, listId) {
@@ -132,12 +102,14 @@ class BookView extends React.Component {
 
         <View style={styles.btnsWrapper}>
           <Button1 
-            color='#71a7a9' 
+            color='#71a7a9'
+            textColor='#fff'
             text='Add Quote'
             onPress={() => {this.setFormData('quote', book)}} />
           
           <Button1 
             color='#71a7a9' 
+            textColor='#fff'
             text='Add Note'
             onPress={() => {this.setFormData('note', book)}} />
         </View>
@@ -150,11 +122,11 @@ class BookView extends React.Component {
         <Modal 
           isVisible={this.state.showModal}
           onBackdropPress={this.toggleModal}>
-
-          <AddForm 
-            data={this.state.modalFormData}
-            onSubmit={(data) => {this.updateStore(data)}} />
-
+          <View style={styles.modalWrapper}>
+            <AddForm 
+              data={this.state.modalFormData}
+              onSubmit={(data) => {this.updateStore(data)}} />
+          </View>
         </Modal>
       </ScrollView>
     )
@@ -179,6 +151,11 @@ const styles = StyleSheet.create({
   },
   notesWrapper: {
     alignItems: 'center'
+  },
+  modalWrapper: {
+    backgroundColor: '#f1f3ee',
+    padding: 30,
+    borderRadius: 5
   }
 })
 

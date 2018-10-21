@@ -5,6 +5,7 @@ import SearchView from '../views/SearchView'
 import SearchResultsView from '../views/SearchResultsView'
 import ListView from '../views/ListView'
 import BookView from '../views/BookView'
+import ClubView from '../views/ClubView'
 import BottomTabs from '../components/BottomTabs'
 
 const BottomTabNavigator = createBottomTabNavigator({
@@ -12,7 +13,8 @@ const BottomTabNavigator = createBottomTabNavigator({
   Profile: ProfileView,
   SearchResults: SearchResultsView,
   List: ListView,
-  Book: BookView
+  Book: BookView,
+  Club: ClubView
 }, {
   tabBarComponent: BottomTabs
 })

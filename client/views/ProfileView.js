@@ -14,6 +14,7 @@ import {
  import List from '../components/List'
  import AddList from '../components/AddList'
  import profileImg from '../assets/images/profileImg.jpg'
+ import Club from '../components/Club'
 
 class ProfileView extends React.Component {
   constructor(props) {
@@ -44,6 +45,7 @@ class ProfileView extends React.Component {
   render() {
     const user = this.props.user
     const lists = this.props.lists.map((list, i) => <List list={list} key={i} />)
+    const clubs = this.props.clubs.map((club, i) => <Club club={club} key={i} />)
     return (
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.userIntro}>
@@ -52,11 +54,15 @@ class ProfileView extends React.Component {
             <Text style={styles.userName}>{user.username}</Text>
           </View>
         </View>
-        <View style={styles.listsContainer}>
-          <Text style={styles.listHeader}>My Lists</Text>
+        <View style={styles.sectionContainer}>
+          <Text style={styles.header}>My Lists</Text>
           {lists}
+          <AddList />
         </View>
-        <AddList />
+        <View style={styles.sectionContainer}>
+          <Text style={styles.header}>My Clubs</Text>
+          {clubs}
+        </View>
       </ScrollView>
     )
   }
@@ -68,6 +74,7 @@ const styles = StyleSheet.create({
   },  
   userIntro: {
     backgroundColor: '#1c4b44',
+    marginBottom: 85
   },
   userIntroWrapper: {
     position: 'relative',
@@ -86,10 +93,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginTop: 10
   },
-  listsContainer: {
-    paddingTop: 85
+  sectionContainer: {
+    paddingTop: 15,
+    paddingLeft: 15,
+    paddingRight: 15
   },
-  listHeader: {
+  header: {
     fontSize: 20,
     textAlign: 'center',
     fontFamily: 'Merriweather',
@@ -97,6 +106,10 @@ const styles = StyleSheet.create({
   }
 })
 
-const mapStateToProps = state => ({user: state.authUser, lists: state.lists})
+const mapStateToProps = state => ({
+  user: state.authUser, 
+  lists: state.lists,
+  clubs: state.clubs
+})
 const mapActionsToProps = {setAuthUser, addList} 
 export default connect(mapStateToProps, mapActionsToProps)(ProfileView)
