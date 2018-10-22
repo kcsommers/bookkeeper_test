@@ -2,23 +2,39 @@ import React from 'react'
 import {
   StyleSheet,
   View, 
-  TextInput
+  TextInput,
+  TouchableOpacity
 } from 'react-native'
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {connect} from 'react-redux'
+import {setSearchResults} from '../actions/searchResultsActions'
+import {withNavigation} from 'react-navigation'
+
+import Icon from 'react-native-vector-icons/FontAwesome'
+import axios from 'axios'
 
 class SearchBar extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       searchTerm: '',
-      type: this.props.type
     }
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleChange = this.handleChange.bind(this)
   }
 
-  handleSubmit() {
-
+  async handleSubmit(endPoint) {
+    let url = (endPoint === 'books' || endPoint === 'clubs') ?
+    'http://localhost:3000/' : 'https://www.googleapis.com/'
+    url = `${url}${endPoint}?q=${this.state.searchTerm}`
+    console.log(url)
+    try {
+      const results = await axios.get(url)
+      this.props.setSearchResults(results.data.items)
+      this.props.navigation.navigate('SearchResults', {searchTerm: this.state.searchTerm, endPoint})
+    }
+    catch(err) {
+      console.log('ERROR FINDING SEARCHRESULTS', err)
+    }
   }
 
   handleChange(searchTerm) {
@@ -26,8 +42,7 @@ class SearchBar extends React.Component {
   }
 
   render() {
-    const type = this.props.styles
-    const styles = (type === 'full') ? fullWidthStyles : smallStyles
+    const styles = (this.props.type === 'full') ? fullWidthStyles : smallStyles
     return(
       <View style={styles.container}>
         <TextInput 
@@ -36,7 +51,9 @@ class SearchBar extends React.Component {
           placeholderTextColor="#888"
           onChangeText={(text) => {this.handleChange(text)}} />
 
-        <Icon name="search" size={20} color="#888" />
+        <TouchableOpacity onPress={() => this.handleSubmit(this.props.endPoint)}>
+          <Icon name="search" size={20} color="#888" />
+        </TouchableOpacity>
       </View>
     )
   }
@@ -72,4 +89,10 @@ const smallStyles = StyleSheet.create({
   }
 })
 
-export default SearchBar
+const mapStateToProps = (state) => {
+  return state
+}
+
+const mapActionsToProps = {setSearchResults}
+
+export default withNavigation(connect(mapStateToProps, mapActionsToProps)(SearchBar))

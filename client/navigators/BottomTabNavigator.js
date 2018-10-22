@@ -9,13 +9,14 @@ import ClubView from '../views/ClubView'
 import BottomTabs from '../components/BottomTabs'
 
 const BottomTabNavigator = createBottomTabNavigator({
-  Search: SearchView,
   Profile: ProfileView,
+  Search: SearchView,
   SearchResults: SearchResultsView,
   List: ListView,
   Book: BookView,
   Club: ClubView
-}, {
+},
+{
   tabBarComponent: BottomTabs
 })
 

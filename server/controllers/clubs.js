@@ -65,7 +65,7 @@ router.post('/join', (req, res) => {
 });
 
 router.get('/', (req, res) => {
-  const q = req.query.search_term;
+  const q = req.query.q;
   db.club.findAll({
     where: {
       $or: [

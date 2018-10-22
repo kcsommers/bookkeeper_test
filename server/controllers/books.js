@@ -12,6 +12,7 @@ router.post('/', (req, res) => {
     authors: bookData.authors,
     description: bookData.description,
     imgUrl: bookData.imgUrl,
+    current: bookData.current,
     banner: bookData.banner
   }).then((book) => {
     db.list.findById(listData.id).then((list) => {
@@ -40,7 +41,7 @@ router.post('/', (req, res) => {
 
 router.get('/', (req, res) => {
   console.log('HIT GET BOOKS ROUTE')
-  const term = req.query.search_term;
+  const term = req.query.q;
   db.book.findAll({
     where: {
       $or: [
