@@ -22,6 +22,10 @@ class SearchResultsView extends React.Component {
       else if(page === 'searchClubs') {
         return <Club club={result} key={i} />
       }
+      else if(page === 'searchUsers') {
+        const users = result.users.map((user) => <Text>{user.username}</Text>)
+        return users
+      }
     })
 
     return(

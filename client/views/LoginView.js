@@ -13,6 +13,7 @@ import axios from 'axios'
 import {connect} from 'react-redux'
 import {setAuthUser} from '../actions/authUserActions'
 import {setLists} from '../actions/listsActions'
+import {setClubs} from '../actions/clubsActions'
 
 class LoginView extends React.Component {
   constructor(props) {
@@ -53,6 +54,7 @@ class LoginView extends React.Component {
     if(results.data.token) {
       this.props.setAuthUser(results.data.authUser)
       this.props.setLists(results.data.lists)
+      this.props.setClubs(results.data.authUser.clubs)
 
       this.setToken(results.data.token)
       this.props.navigation.navigate('Search')
@@ -141,5 +143,5 @@ const styles = StyleSheet.create({
 })
 
 const mapStateToProps = state => state
-const mapActionsToProps = {setAuthUser, setLists} 
+const mapActionsToProps = {setAuthUser, setLists, setClubs} 
 export default connect(mapStateToProps, mapActionsToProps)(LoginView)

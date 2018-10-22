@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 export const setFormData = (type, data) => {
   let formFields = []
   let modelFields = []
@@ -109,4 +111,10 @@ export const setFormData = (type, data) => {
   }
 
   return formData
+}
+
+export const handleDelete = async (data, cb) => {
+  const url = `http://localhost:3000/${data.endpoint}/${data.id}`
+  const results = await axios.delete(url)
+  cb(data)
 }

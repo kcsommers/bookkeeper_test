@@ -130,9 +130,12 @@ router.post('/login', passport.authenticate('local', {session: false}), (req, re
     (err, token) => {
       if(!err) {
         db.user.find({
-          where: {username: req.body.username}
+          where: {username: req.body.username},
+          include: [{
+            model: db.club,
+            include: [db.user, db.post]
+          }]
         }).then((authUser) => {
-          console.log('AUTH,', authUser)
           getUserData(authUser).then((data) => {
             const lists = data.lists;
             res.json({authUser, lists, token});

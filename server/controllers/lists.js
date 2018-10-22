@@ -18,5 +18,28 @@ router.post('/', (req, res) => {
   });
 });
 
+router.delete('/:id', (req, res) => {
+  console.log("HIT DELETE LIST ROUTE")
+  db.list.destroy({
+    where: {
+      id: req.params.id
+    }
+  }).then((result) => {
+    db.listsBooks.destroy({
+      where: {
+        listId: req.params.id
+      }
+    }).then((results) => {
+      res.json({results})
+    }).catch((err) => {
+      console.log("ERROR DESTROYING LISTSBOOKS ASSOCIATION", err)
+      res.json({err})
+    })
+  }).catch((err) => {
+    console.log("ERROR DELETING LIST FROM DB", err)
+    res.json({err})
+  })
+});
+
 
 module.exports = {router}

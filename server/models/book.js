@@ -6,13 +6,13 @@ module.exports = (sequelize, DataTypes) => {
     description: DataTypes.STRING,
     imgUrl: DataTypes.STRING,
     banner: DataTypes.STRING,
-    userId: DataTypes.INTEGER
+    current: DataTypes.BOOLEAN
   }, {});
   book.associate = function(models) {
     // associations can be defined here
-    models.book.belongsTo(models.user);
     models.book.hasMany(models.quote);
     models.book.hasMany(models.note);
+    models.book.belongsToMany(models.user, {through: 'usersBooks'});
     models.book.belongsToMany(models.list, {through: 'listsBooks'});
     models.book.belongsToMany(models.club, {through: 'clubsBooks'});
   };

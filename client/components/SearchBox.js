@@ -37,6 +37,9 @@ class SearchBox extends React.Component {
     else if(page === 'searchClubs') {
       url = `http://localhost:3000/clubs?search_term=${this.state.searchTerm}`
     }
+    else if(page === 'searchUsers') {
+      url = `http://localhost:3000/books?search_term=${this.state.searchTerm}`
+    }
 
     try {
       const results = await axios.get(url)

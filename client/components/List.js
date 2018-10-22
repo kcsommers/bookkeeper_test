@@ -33,7 +33,7 @@ class List extends React.Component {
           <Text style={styles.listName}>{list.name}</Text>
           <View style={styles.listIcons}>
             <TouchableOpacity 
-              onPress={() => {this.props.navigation.navigate('List', {list})}}>
+              onPress={() => {this.props.navigation.navigate('List', {listId: list.id})}}>
               <Icon name="th-list" size={25} color="#1b9ce2" />
             </TouchableOpacity>
           </View>

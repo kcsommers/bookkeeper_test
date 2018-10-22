@@ -10,7 +10,7 @@ import {withNavigation} from 'react-navigation'
 import axios from 'axios'
 import {Dropdown} from 'react-native-material-dropdown'
 import {connect} from 'react-redux'
-import {addBook} from '../actions/authUserActions'
+import {addBook} from '../actions/listsActions'
 import missingBookCover from '../assets/images/missingBookCover.jpg'
 
 class BookResult extends React.Component {

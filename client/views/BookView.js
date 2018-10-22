@@ -9,11 +9,11 @@ import {
 import Modal from 'react-native-modal'
 
 import {connect} from 'react-redux'
-import {addQuote} from '../actions/listsActions'
-import {addNote} from '../actions/listsActions'
+import {addQuote, addNote, deleteBook} from '../actions/listsActions'
 
 import Banner from '../components/Banner'
 import Button1 from '../components/Button1'
+import DeleteBtn from '../components/DeleteBtn'
 import Quote from '../components/Quote'
 import Note from '../components/Note'
 import AddForm from '../components/AddForm'
@@ -39,21 +39,32 @@ class BookView extends React.Component {
   }
 
   toggleModal() {
-    this.setState({showModal: !this.state.showModal})
+    if(this.state.showModal) {
+      this.setState({showModal: false, formType: ''})
+    }
+    else {
+      this.setState({showModal: true})
+    }
   }
 
   updateStore(data) {
+    console.log('UPDATE STORE DATA', data)
     const bookId = this.props.navigation.getParam('bookId')
     const listId = this.props.navigation.getParam('listId')  
     if(!data.err) {
       if(this.state.formType === 'quote') {
         this.props.addQuote(data.quote, bookId, listId)
+        this.toggleModal()
       }
       else if(this.state.formType === 'note') {
         this.props.addNote(data.note, bookId, listId)
+        this.toggleModal()
+      }
+      else {
+        this.props.deleteBook(bookId, listId)
+        this.props.navigation.navigate('Profile')
       }
     }
-    this.toggleModal()
   }
 
   setFormData(type, book) {
@@ -79,12 +90,12 @@ class BookView extends React.Component {
     let description = (book) ? book.description : ''
     let imgSrc = (book && book.imgUrl) ? {uri: book.imgUrl} : missingBookCover
 
-    let quotes = (book.quotes.length) ? 
+    let quotes = (book && book.quotes.length) ? 
     book.quotes.map((quote, i) => <Quote quote={quote} key={i} />) 
     : 
     <Text>No quotes just yet</Text>
 
-    let notes = (book.notes.length) ? 
+    let notes = (book && book.notes.length) ? 
     book.notes.map((note, i) => <Note note={note} key={i} />)
     : 
     <Text>No notes just yet</Text>
@@ -112,6 +123,11 @@ class BookView extends React.Component {
             textColor='#fff'
             text='Add Note'
             onPress={() => {this.setFormData('note', book)}} />
+
+          <DeleteBtn
+            data={{id: (book) ? book.id : -1, endpoint: 'books', userId: this.props.user.id}} 
+            type="button"
+            onDelete={(data) => {this.updateStore(data)}} />
         </View>
 
         <View style={styles.notesWrapper}>
@@ -166,6 +182,6 @@ const mapStateToProps = (state) => {
   }
 }
 
-const mapActionsToProps = {addQuote, addNote}
+const mapActionsToProps = {addQuote, addNote, deleteBook}
 
 export default connect(mapStateToProps, mapActionsToProps)(BookView)
