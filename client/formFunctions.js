@@ -8,6 +8,18 @@ export const setFormData = (type, data) => {
   let formData = {}
 
   switch(type) {
+    case 'list':
+      url = 'http://localhost:3000/lists'
+      formFields.push({
+        field: 'name',
+        placeholder: 'List Name',
+        value: ''
+      })
+      modelFields.push({
+        type: 'userId',
+        value: data.user.id
+      })
+      break
     case 'note':
       url = 'http://localhost:3000/notes'
       formFields.push({
@@ -15,7 +27,7 @@ export const setFormData = (type, data) => {
         placeholder: 'Note',
         value: ''
       })
-      modelFields = [
+      modelFields.push(
         {
           type: 'userId',
           value: data.user.id
@@ -24,7 +36,7 @@ export const setFormData = (type, data) => {
           type: 'bookId',
           value: data.book.id
         }
-      ]
+      )
       break
     case 'quote':
       url = 'http://localhost:3000/quotes'
@@ -37,7 +49,7 @@ export const setFormData = (type, data) => {
         placeholder: 'Page',
         value: ''
       })
-      modelFields = [
+      modelFields.push(
         {
           type: 'userId',
           value: data.user.id
@@ -46,7 +58,7 @@ export const setFormData = (type, data) => {
           type: 'bookId',
           value: data.book.id
         }
-      ]
+      )
       break
     case 'club-search':
       url = 'httml://localhost:3000/clubs/topic'
@@ -106,9 +118,7 @@ export const setFormData = (type, data) => {
   formData.formFields = formFields
   formData.modelFields = modelFields
   formData.miscData = miscData
-  formData.httpData = {
-    url: url
-  }
+  formData.httpData = {url}
 
   return formData
 }
@@ -116,5 +126,5 @@ export const setFormData = (type, data) => {
 export const handleDelete = async (data, cb) => {
   const url = `http://localhost:3000/${data.endpoint}/${data.id}`
   const results = await axios.delete(url)
-  cb(data)
+  cb(results.data, data)
 }

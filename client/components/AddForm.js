@@ -51,6 +51,7 @@ class AddForm extends React.Component {
   } 
 
   render() {
+    const formData = this.state.data
     const inputs = this.state.data.formFields.map((field, i) => (
       <TextInput 
         placeholder={field.placeholder}
@@ -67,7 +68,7 @@ class AddForm extends React.Component {
           style={styles.submitBtn} 
           onPress={() => {
             this.handleSubmit(this.state.data).then((data) => {
-              this.props.onSubmit(data)
+              this.props.onSubmit(data, formData)
             })
           }}>
           <Text style={styles.submitText}>Submit</Text>

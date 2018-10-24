@@ -7,6 +7,7 @@ import {
 } from 'react-native'
 
 const Button1 = (props) => {
+  console.log(props)
   return (
     <TouchableOpacity 
       style={[styles.btn, {backgroundColor: props.color}]}
@@ -20,13 +21,12 @@ const styles = StyleSheet.create({
   btn: {
     paddingTop: 15,
     paddingBottom: 15,
-    width: '85%',
     borderRadius: 5,
-    marginBottom: 10,
     shadowColor: '#000',
     shadowOpacity: 0.2,
     shadowOffset: {width: 1, height: 2},
     shadowRadius: 2,
+    alignSelf: 'stretch'
   },
   btnText: {
     textAlign: 'center',

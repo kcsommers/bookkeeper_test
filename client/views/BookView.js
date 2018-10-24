@@ -13,7 +13,6 @@ import {addQuote, addNote, deleteBook} from '../actions/listsActions'
 
 import Banner from '../components/Banner'
 import Button1 from '../components/Button1'
-import DeleteBtn from '../components/DeleteBtn'
 import Quote from '../components/Quote'
 import Note from '../components/Note'
 import AddForm from '../components/AddForm'
@@ -124,10 +123,10 @@ class BookView extends React.Component {
             text='Add Note'
             onPress={() => {this.setFormData('note', book)}} />
 
-          <DeleteBtn
+          {/* <DeleteBtn
             data={{id: (book) ? book.id : -1, endpoint: 'books', userId: this.props.user.id}} 
             type="button"
-            onDelete={(data) => {this.updateStore(data)}} />
+            onDelete={(data) => {this.updateStore(data)}} /> */}
         </View>
 
         <View style={styles.notesWrapper}>

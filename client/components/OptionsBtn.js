@@ -11,11 +11,10 @@ import Modal from 'react-native-modal'
 import ModalOption from './ModalOption'
 
 import {connect} from 'react-redux'
-import {addQuote} from '../actions/listsActions'
-import {addNote} from '../actions/listsActions'
 
 import AddForm from './AddForm'
 import Button1 from './Button1'
+import IconBtn from './IconBtn'
 
 import {setFormData} from '../formFunctions.js'
 
@@ -43,18 +42,8 @@ class OptionsBtn extends React.Component{
   }
 
   updateStore(data) {
-    const bookId = this.props.book.id
-    const listId = this.props.list.id  
     if(!data.err) {
-      if(this.state.formType === 'quote') {
-        this.props.addQuote(data.quote, bookId, listId)
-      }
-      else if(this.state.formType === 'note') {
-        this.props.addNote(data.note, bookId, listId)
-      }
-      else if(this.state.formType === 'club-start') {
-        this.props.navigation.navigate('Club', {club: data.club})
-      }
+      this.props.navigation.navigate('Club', {club: data.club})
     }
     this.setState({showModalForm: false, showModal: false})
   }
@@ -63,7 +52,6 @@ class OptionsBtn extends React.Component{
     const data = {
       user: this.props.user,
       book: this.props.book,
-      list: this.props.list
     }
     const formData = setFormData(type, data)
     this.setState({modalFormData: formData, showModalForm: true, formType: type})
@@ -72,12 +60,6 @@ class OptionsBtn extends React.Component{
   render() {
     let modalContent = (!this.state.showModalForm) ?
     <View style={styles.modalOptionsWrapper}>
-      <ModalOption 
-        text="Add Note"
-        onPress={() => {this.setFormData('note')}} />
-      <ModalOption 
-        text="Add Quote"
-        onPress={() => {this.setFormData('quote')}} />
       <ModalOption 
         text="Search Clubs"
         onPress={() => {this.setFormData('club-search')}} />
@@ -93,12 +75,11 @@ class OptionsBtn extends React.Component{
 
     return (
       <View style={styles.container}>
-        <Button1 
-          color="#fff"
-          textColor='#444'
-          text="Options"
-          onPress={this.toggleModal}
-        />
+        <IconBtn 
+          name="options"
+          backgroundColor="#fff"
+          iconColor="#444" 
+          onPress={this.toggleModal} />
 
         <Modal 
           isVisible={this.state.showModal}
@@ -158,6 +139,6 @@ const mapStateToProps = (state) => {
   }
 }
 
-const mapActionsToProps = {addQuote, addNote}
+const mapActionsToProps = {}
 
 export default withNavigation(connect(mapStateToProps, mapActionsToProps)(OptionsBtn))
