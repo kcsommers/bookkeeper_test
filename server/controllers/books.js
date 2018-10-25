@@ -58,8 +58,22 @@ router.get('/', (req, res) => {
   });
 });
 
+router.post('/update', (req, res) => {
+  console.log('HIT UPDAT BOOK ROUTE')
+  db.book.update(req.body.newData, {
+    where: {
+      id: req.body.bookId
+    }
+  }).then((book) => {
+    res.json({book})
+  }).catch((err) => {
+    console.log("ERROR UPDATING BOOK", err)
+    res.json({err})
+  });
+});
+
 router.delete('/:id', (req, res) => {
-  console.log("HIT DELETE BOOK ROUTE", req.body.data)
+  console.log("HIT DELETE BOOK ROUTE")
   db.book.destroy({
     where: {id: req.params.id}
   }).then((bookResults) => {

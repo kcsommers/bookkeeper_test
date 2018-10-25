@@ -8,8 +8,6 @@ import {
   TouchableOpacity
 } from 'react-native'
 import {withNavigation} from 'react-navigation'
-import Book from './Book'
-import Icon from 'react-native-vector-icons/FontAwesome'
 
 import missingBookCover from '../assets/images/missingBookCover.jpg'
 

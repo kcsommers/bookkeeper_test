@@ -2,6 +2,7 @@ export const SET_LISTS = 'lists:setLists'
 export const ADD_LIST = 'lists:addList'
 export const DELETE_LIST = 'lists:deleteList'
 export const ADD_BOOK = 'lists:addBook'
+export const UPDATE_BOOK = 'lists:updateBook'
 export const DELETE_BOOK = 'lists:deleteBook'
 export const ADD_QUOTE = 'lists:addQuote'
 export const ADD_NOTE = 'lists:addNote'
@@ -24,6 +25,11 @@ export const deleteList = (listId) => ({
 export const addBook = (book, listId) => ({
   type: ADD_BOOK,
   payload: {book, listId}
+})
+
+export const updateBook = (bookData, listId) => ({
+  type: UPDATE_BOOK,
+  payload: {bookData, listId}
 })
 
 export const deleteBook = (bookId, listId) => ({

@@ -8,9 +8,6 @@ import {
 } from 'react-native'
 import {withNavigation} from 'react-navigation'
 import missingBookCover from '../assets/images/missingBookCover.jpg'
-
-import OptionsBtn from './OptionsBtn'
-import Button1 from './Button1'
 import IconBtn from './IconBtn'
 
 class Book extends React.Component {
@@ -37,21 +34,27 @@ class Book extends React.Component {
                 backgroundColor='#71a7a9'
                 iconColor="#fff" 
                 onPress={() => {
-                  this.props.trigger({type: 'note', book, listId: book.listsBooks.listId})
+                  this.props.modalTrigger({
+                    type: 'notes', book, listId: book.listsBooks.listId
+                  })
                 }} />
               <IconBtn 
                 name="quote" 
                 backgroundColor="#71a7a9"
                 iconColor="#fff"
                 onPress={() => {
-                  this.props.trigger({type: 'quote', book, listId: book.listsBooks.listId})
+                  this.props.modalTrigger({
+                    type: 'quotes', book, listId: book.listsBooks.listId
+                  })
                 }} />
               <IconBtn 
                 name="options" 
                 backgroundColor="#fff"
                 iconColor="#444"
                 onPress={() => {
-                  this.props.trigger({type: 'options', book, listId: book.listsBooks.listId})
+                  this.props.modalTrigger({
+                    type: 'options', book, listId: book.listsBooks.listId
+                  })
                 }} />
             </View>
           </View>

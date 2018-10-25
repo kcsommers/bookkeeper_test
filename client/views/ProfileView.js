@@ -5,93 +5,40 @@ import {
   ScrollView, 
   Text,
   TouchableOpacity
- } from 'react-native'
- import axios from 'axios'
- import {connect} from 'react-redux'
- import {addList, addNote, addQuote} from '../actions/listsActions'
- import {setFormData} from '../formFunctions'
- import Icon from 'react-native-vector-icons/FontAwesome'
+} from 'react-native'
+import {connect} from 'react-redux'
+import {addList, addNote, addQuote} from '../actions/listsActions'
+import Icon from 'react-native-vector-icons/FontAwesome'
 
- import Modal from 'react-native-modal'
- import SearchBar from '../components/SearchBar'
- import List from '../components/List'
- import Book from '../components/Book'
- import AddForm from '../components/AddForm'
+import Modal from 'react-native-modal'
+import ModalContent from '../components/ModalContent'
+import SearchBar from '../components/SearchBar'
+import List from '../components/List'
+import Book from '../components/Book'
 
 class ProfileView extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      listName: '',
       showModal: false,
       modalData: null
     }
-    this.handleChangeText = this.handleChangeText.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
     this.toggleModal = this.toggleModal.bind(this)
-    this.updateStore = this.updateStore.bind(this)
-    this.triggerForm = this.triggerForm.bind(this)
+    this.handleModalTrigger = this.handleModalTrigger.bind(this)
   }
 
   toggleModal() {
-    this.setState({showModal: !this.state.showModal})
+    this.setState({showModal: !this.state.showModal, modalData: null})
   }
 
-  handleChangeText(text) {
-    this.setState({listName: text})
-  }
-
-  updateStore(newData, formData) {
-    if(!newData.err) {
-      const type = formData.type
-      let listId
-      console.log(type)
-      switch(type) {
-        case 'list':
-          this.props.addList(newData.list)
-          break
-        case 'quote':
-          listId = formData.listId
-          this.props.addQuote(newData.quote, newData.quote.bookId, listId)
-          break
-        case 'note':
-        listId = formData.listId
-        this.props.addNote(newData.note, newData.note.bookId, listId)
-          break
-        case 'club-start':
-          this.props.navigation.navigate('Club', {club: newData.club})
-          break
-      }
-    }
-    this.setState({modalData: null, showModal: false})
-  }
-
-  triggerForm(data) {
-    let formData = setFormData(data.type, {book: data.book, user: this.props.user})
-    formData.listId = data.listId
-    formData.type = data.type
-    this.setState({
-      showModal: true,
-      modalData: formData
-    })
-  }
-
-  async handleSubmit() {
-    const url = 'http://localhost:3000/lists'
-    const list = {
-      name: this.state.listName,
-      userId: this.props.user.id
-    }
-    const results = await axios.post(url, list)
-    if(!results.data.err) {
-      this.props.addList(results.data.list)
-    }
+  handleModalTrigger(modalData) {
+    this.setState({modalData, showModal: true})
   }
 
   render() {
     const lists = this.props.lists.map((list, i) => <List list={list} key={i} />)
     const currentReads = []
-    this.props.lists.forEach((list) => {
+    this.props.lists.forEach((list, i) => {
       list.books.forEach((book) => { if(book.current) {currentReads.push(book)} })
     })
 
@@ -101,11 +48,12 @@ class ProfileView extends React.Component {
         <Book 
           book={book} 
           key={i} 
-          trigger={(data) => this.triggerForm(data)} />
+          modalTrigger={(data) => this.handleModalTrigger(data)} />
       </ScrollView>
     ))
     :
     <Text>You are not currently reading anything!</Text>
+
 
     return (
       <ScrollView contentContainerStyle={styles.container}>
@@ -124,7 +72,7 @@ class ProfileView extends React.Component {
             {lists}
             <View style={styles.addListWrapper}>
               <TouchableOpacity style={styles.addListBtn} onPress={() => {
-                this.triggerForm({type: 'list', book: null})
+                this.handleModalTrigger({type: 'list'})
               }}>
                 <Icon name="plus" size={25} color="#1b9ce2" />
               </TouchableOpacity>
@@ -139,10 +87,12 @@ class ProfileView extends React.Component {
             isVisible={this.state.showModal}
             onBackdropPress={this.toggleModal}>
 
-            <AddForm 
-              onSubmit={(data, formData) => {this.updateStore(data, formData)}}
-              data={this.state.modalData} />
+            <ModalContent 
+              data={this.state.modalData}
+              toggleModal={() => {this.toggleModal()}}
+            />
           </Modal>
+
         </View>
       </ScrollView>
     )

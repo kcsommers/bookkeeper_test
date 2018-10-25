@@ -2,6 +2,7 @@ import {
   SET_LISTS,
   ADD_BOOK,
   DELETE_BOOK,
+  UPDATE_BOOK,
   ADD_LIST,
   DELETE_LIST,
   ADD_QUOTE,
@@ -31,9 +32,35 @@ const listsReducer = (state = [], {type, payload}) => {
         listUpdated,
         ...state.slice(listIndex + 1)
       ]
+    case UPDATE_BOOK:
+      listIndex = state.findIndex((listObj) => listObj.id === payload.listId)
+      bookIndex = state[listIndex].books.findIndex((bookObj) => bookObj.id === payload.bookData.bookId)
+
+      bookUpdated = state[listIndex].books.find((bookObj) => bookObj.id === payload.bookData.bookId)
+
+      for(key in bookUpdated) {
+        for(field in payload.bookData.newData) {
+          if(key === field) {
+            bookUpdated[key] = payload.bookData.newData[field]
+            break
+          }
+        }
+      }
+      
+      listUpdated = state.find((listObj) => listObj.id === payload.listId)
+      listUpdated.books = [
+        ...listUpdated.books.slice(0, bookIndex),
+        bookUpdated,
+        ...listUpdated.books.slice(bookIndex + 1)
+      ]
+
+      return [
+        ...state.slice(0, listIndex),
+        listUpdated,
+        ...state.slice(listIndex + 1)
+      ]
     case DELETE_BOOK:
       listIndex = state.findIndex((listObj) => listObj.id === payload.listId)
-      console.log(listIndex)
       bookIndex = state[listIndex].books.findIndex((bookObj) => bookObj.id === payload.bookId)
       listUpdated = state.find((listObj) => listObj.id === payload.listId)
       listUpdated.books = [

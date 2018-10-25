@@ -6,86 +6,43 @@ import {
   ScrollView,
   TouchableOpacity
 } from 'react-native'
-import {setFormData, handleDelete} from '../formFunctions'
+import {handleDelete} from '../formFunctions'
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 
 import {connect} from 'react-redux'
 import {
   deleteList,
   deleteBook, 
+  updateBook,
   addNote, 
   addQuote} from '../actions/listsActions'
 
 import Modal from 'react-native-modal'
+import ModalContent from '../components/ModalContent'
 import Book from '../components/Book'
-import AddForm from '../components/AddForm'
-import ModalOption from '../components/ModalOption'
 
 class ListView extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       showModal: false,
-      modalData: null,
-      modalContent: ''
+      modalData: null
     }
     this.updateStore = this.updateStore.bind(this)
-    this.triggerAddForm = this.triggerAddForm.bind(this)
     this.toggleModal = this.toggleModal.bind(this)
-    this.handleTrigger = this.handleTrigger.bind(this)
+    this.handleModalTrigger = this.handleModalTrigger.bind(this)
   }
 
   toggleModal() {
-    this.setState({showModal: !this.state.showModal})
+    this.setState({showModal: !this.state.showModal, modalData: null})
   }
 
-  updateStore(newData, formData) {
-    const type = formData.type
-    const listId = this.props.navigation.getParam('listId')
-
-    switch(type) {
-      case 'quote':
-        this.props.addQuote(newData.quote, newData.quote.bookId, listId)
-        break
-      case 'note':
-        this.props.addNote(newData.note, newData.note.bookId, listId)
-        break
-      case 'club-start':
-        this.props.navigation.navigate('Club', {club: newData.club})
-        break
-      case 'delete-book':
-        this.props.deleteBook(formData.id, listId)
-        break
-      case 'delete-list':
-        this.props.deleteList(formData.id)
-        this.props.navigation.navigate('Profile')
-        break
-    }
-    this.toggleModal()
+  updateStore(data) {
+    
   }
 
-  triggerAddForm(data) {
-    let formData = setFormData(data.type, {book: data.book, user: this.props.user})
-    formData.listId = data.listId
-    formData.type = data.type
-    this.setState({
-      showModal: true,
-      modalData: formData,
-      modalContent: data.type
-    })
-  }
-
-  handleTrigger(data) {
-    if(data.type === 'options') {
-      this.setState({
-        modalData: data,
-        modalContent: 'options', 
-        showModal: true
-      })
-    }
-    else {
-      this.triggerAddForm(data)
-    }
+  handleModalTrigger(modalData) {
+    this.setState({modalData, showModal: true})
   }
 
   getListFromStore(listId) {
@@ -96,73 +53,14 @@ class ListView extends React.Component {
   render() {
     const listId = this.props.navigation.getParam('listId')
     const list = this.getListFromStore(listId)
-    let modalData = this.state.modalData
     const books = list.books.map((book, i) => (
       <View key={i} style={styles.bookRow}>
         <Book 
           book={book} 
-          trigger={(data) => {this.handleTrigger(data)}}
+          modalTrigger={(data) => this.handleModalTrigger(data)}
           key={i} />
       </View>)
     )
-    const modalContent = (this.state.modalContent === 'options') ?
-    <View style={styles.modalWrapper}>
-      <ModalOption 
-        text={(modalData.book.current) ? "Finished!" : "Set as Current Read"}
-        onPress={() => {}}
-      />
-
-      <ModalOption 
-        text="Add Note"
-        onPress={() => {
-          modalData.type = 'note'
-          this.triggerAddForm(modalData)
-        }}
-      />
-
-      <ModalOption 
-        text="Add Quote"
-        onPress={() => {
-          modalData.type = 'quote'
-          this.triggerAddForm(modalData)
-        }}
-      />
-
-      <ModalOption 
-        text={"Search Clubs"}
-        onPress={() => {
-          modalData.type = 'club-search'
-          this.triggerAddForm(modalData)
-        }} 
-      />
-
-      <ModalOption 
-        text={"Start a Club"}
-        onPress={() => {
-          modalData.type = 'club-start'
-          this.triggerAddForm(modalData)
-        }} 
-      />
-
-      <ModalOption 
-        text={"Remove from List"}
-        onPress={() => {
-          handleDelete({
-            listId,
-            type: 'delete-book',
-            endpoint: 'books', 
-            id: modalData.book.id,
-          }, this.updateStore)
-        }}
-      />
-    </View>
-    :
-    <View style={styles.modalWrapper}>
-      <AddForm 
-        onSubmit={(data, formData) => {this.updateStore(data, formData)}}
-        data={this.state.modalData} />
-    </View>
-
     return (
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.listHeader}>
@@ -191,11 +89,15 @@ class ListView extends React.Component {
         </View>
 
         {books}
+        
         <Modal
           isVisible={this.state.showModal}
           onBackdropPress={this.toggleModal}>
 
-          {modalContent}
+          <ModalContent 
+            data={this.state.modalData}
+            toggleModal={() => {this.toggleModal()}}
+          />
         </Modal>
       </ScrollView>
     )
@@ -230,7 +132,9 @@ const styles = StyleSheet.create({
     paddingBottom: 15
   },
   modalWrapper: {
-    backgroundColor: 'red'
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    padding: 15
   }
 })
 
@@ -239,6 +143,6 @@ const mapStateToProps = (state) => ({
   user: state.authUser
 })
 
-const mapActionsToProps = {deleteList, deleteBook, addNote, addQuote}
+const mapActionsToProps = {deleteList, deleteBook, updateBook, addNote, addQuote}
 
 export default connect(mapStateToProps, mapActionsToProps)(ListView)
