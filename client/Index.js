@@ -32,6 +32,7 @@ class Index extends React.Component {
   async componentDidMount() {
     await Font.loadAsync({
       'Merriweather': require('./assets/fonts/Merriweather-Regular.ttf'),
+      'MerrItalic': require('./assets/fonts/Merriweather-Italic.ttf'),
       'Pacifico': require('./assets/fonts/Pacifico-Regular.ttf')
     })
     this.setState({fontsLoaded: true})

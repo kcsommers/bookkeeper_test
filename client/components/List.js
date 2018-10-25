@@ -18,12 +18,33 @@ class List extends React.Component {
 
   render() {
     const list = this.props.list
-    const images = list.books.map((book, i) => {
-      let imgSrc = (book.imgUrl) ? {uri: book.imgUrl} : missingBookCover
-      return <Image source={imgSrc} style={styles.bookImg} key={i} />
-    })
+    let bookDisplay = <Text>No books just yet</Text>
+    let bookImages = []
+    let imgContainerStyle, imgStyle
+    if(list.books.length) {
+      if(list.books.length < 4) {
+        imgContainerStyle = ''
+        imgStyle = {marginRight: 10}
+      }
+      else {
+        imgContainerStyle = {justifyContent: 'space-between'}
+        imgStyle = ''
+      }
 
-    const books = (images.length) ? images : <Text>No Books Just Yet</Text>
+      list.books.forEach((book, i) => {
+        if(i < 4) {
+          let imgSrc = (book.imgUrl) ? {uri: book.imgUrl} : missingBookCover
+          let bookImg = <Image 
+                          source={imgSrc}
+                          key={i} 
+                          style={[styles.bookImg, imgStyle]} />
+          bookImages.push(bookImg)
+        }
+      })
+
+      bookDisplay = bookImages
+    }
+
     return (
       <TouchableOpacity style={styles.listWrapper} onPress={() => {
         this.props.navigation.navigate('List', {listId: list.id})
@@ -31,8 +52,8 @@ class List extends React.Component {
         <View>
           <Text style={styles.listTitle}>{list.name}</Text>
         </View>
-        <View style={styles.bookImgs}>
-          {books}
+        <View style={[styles.bookImgs, imgContainerStyle]}>
+          {bookDisplay}
         </View>
       </TouchableOpacity>
     )
@@ -51,12 +72,11 @@ const styles = StyleSheet.create({
   },
   bookImgs: {
     flexDirection: 'row',
-    flex: 1,
-    justifyContent: 'space-between'
+    flex: 1
   },  
   bookImg: {
     width: 75,
-    height: 115
+    height: 115,
   },
   listTitle: {
     fontFamily: 'Merriweather',

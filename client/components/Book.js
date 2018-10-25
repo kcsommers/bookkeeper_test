@@ -82,10 +82,12 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: 'Merriweather',
+    color: '#1c4b44',
     fontSize: 20
   },
   authors: {
-    fontFamily: 'Merriweather',
+    fontFamily: 'MerrItalic',
+    color: '#888',
     fontSize: 16
   },  
   bookButtons: {

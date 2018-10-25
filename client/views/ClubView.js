@@ -34,7 +34,11 @@ class ClubView extends React.Component {
 
   render() {
     const club = this.getClubFromStore(this.props.navigation.getParam('clubId'))
-    const posts = club.posts.map((post, i) => <Post post={post} key={i} />)
+    const posts = club.posts.map((post, i) => (
+      <View style={{marginBottom: 15}} key={i}>
+        <Post post={post} key={i} /> 
+      </View>
+    ))
     const members = club.users.map((user, i) => (
       <Image 
         source={require('../assets/images/profileImg.jpg')}
@@ -47,32 +51,43 @@ class ClubView extends React.Component {
       <ScrollView contentContainerStyle={styles.container}>
         <Banner image={bg1} />
 
-        <View style={styles.clubDetails}>
-          <Image source={{uri: club.bookImg}} style={styles.clubImg} />
-          <Text style={[styles.name, styles.text]}>{club.name}</Text>
-          <Text style={[styles.description, styles.text]}>{club.description}</Text>
-        </View>
+        <View style={styles.wrapper}>
+          <View style={styles.clubDetails}>
+            <Image source={{uri: club.bookImg}} style={styles.clubImg} />
+            <Text style={[styles.name, styles.text]}>{club.name}</Text>
+            <Text style={[styles.description, styles.text]}>{club.description}</Text>
+          </View>
 
-        <View style={styles.membersWrapper}>
-          {members}
-        </View>
+          <View style={styles.membersWrapper}>
+            <Text style={styles.header}>Club Members</Text>
+            {members}
+          </View>
 
-        <View style={styles.postsWrapper}>
-          {posts}
-        </View>
-        <AddForm data={formData} onSubmit={(data) => {this.updateStore(data)}} />
+          <View style={styles.postsWrapper}>
+            <Text style={styles.header}>Club Posts</Text>
+            {posts}
+          </View>
+          <AddForm data={formData} onSubmit={(data) => {this.updateStore(data)}} />
+          </View>
       </ScrollView>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-
+  wrapper: {
+    paddingLeft: 15,
+    paddingRight: 15
   },
   text: {
     fontFamily: 'Merriweather',
     textAlign: 'center'
+  },
+  header: {
+    fontFamily: 'Merriweather',
+    fontSize: 22,
+    marginBottom: 15,
+    marginTop: 20
   },
   clubDetails: {
     justifyContent: 'center',
@@ -84,15 +99,22 @@ const styles = StyleSheet.create({
     marginTop: -150
   },
   name: {
-
+    fontSize: 25,
+    color: '#1c4b44',
+    marginTop: 10,
+    marginBottom: 10
   },
    description: {
-
+    fontSize: 16,
+    color: '#444',
+    lineHeight: 25
    },
    memberImg: {
-     width: 100,
-     height: 100,
-     borderRadius: 50
+     width: 60,
+     height: 60,
+     borderRadius: 30,
+     borderWidth: 2,
+     borderColor: '#fff'
    }
 })
 

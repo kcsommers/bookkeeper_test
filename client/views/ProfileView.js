@@ -15,6 +15,7 @@ import ModalContent from '../components/ModalContent'
 import SearchBar from '../components/SearchBar'
 import List from '../components/List'
 import Book from '../components/Book'
+import Club from '../components/Club'
 
 class ProfileView extends React.Component {
   constructor(props) {
@@ -36,12 +37,20 @@ class ProfileView extends React.Component {
   }
 
   render() {
-    const lists = this.props.lists.map((list, i) => <List list={list} key={i} />)
+    const lists = this.props.lists.map((list, i) => (
+      <View style={{marginBottom: 15}} key={i}>
+        <List list={list} key={i} />
+      </View>
+    ))
+    const clubs = this.props.user.clubs.map((club, i) => (
+      <View style={{marginBottom: 15}} key={i}>
+        <Club club={club} key={i} />
+      </View>
+    ))
     const currentReads = []
-    this.props.lists.forEach((list, i) => {
+    this.props.lists.forEach((list) => {
       list.books.forEach((book) => { if(book.current) {currentReads.push(book)} })
     })
-
     const currentsDisplay = (currentReads.length) ? 
     currentReads.map((book, i) => (
       <ScrollView key={i}>
@@ -81,6 +90,7 @@ class ProfileView extends React.Component {
 
           <View style={styles.clubsContainer}>
             <Text style={[styles.header]}>My Clubs</Text>
+            {clubs}
           </View>
 
           <Modal
