@@ -19,6 +19,9 @@ router.post('/', (req, res) => {
       list.addBook(book).then((lB) => {
         db.user.findById(bookData.userId).then((user) => {
           user.addBook(book).then((uB) => {
+            book.dataValues.listsBooks = {listId: list.id, bookId: book.id};
+            book.dataValues.quotes = [];
+            book.dataValues.notes = [];
             res.json({book});
           }).catch((err) => {
             console.log("ERROR ADDING BOOK TO USER", err)

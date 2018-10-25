@@ -95,6 +95,7 @@ class ModalContent extends React.Component {
         display = <ModalOptions 
                     book={modalData.book}
                     triggerForm={(type) => {this.triggerForm(type)}}
+                    toggleModal={() => {this.props.toggleModal()}}
                     onDelete={() => {this.confirm('delete-book')}} />
         break
       case 'form':

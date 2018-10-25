@@ -13,8 +13,21 @@ import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 class ModalOptions extends React.Component {
 
-  toggleCurrentRead(book) {
-    book.current = !book.current
+  constructor(props) {
+    super(props)
+    this.toggleCurrentRead = this.toggleCurrentRead.bind(this)
+  }
+
+  async toggleCurrentRead(book) {
+    const isCurrent = !book.current
+    const url = 'http://localhost:3000/books/update'
+    const data = {newData: {current: isCurrent}, bookId: book.id}
+    const updatedBook = await axios.post(url, data)
+    this.props.updateBook({
+      newData: {current: isCurrent}, 
+      bookId: book.id
+    }, book.listsBooks.listId)
+    this.props.toggleModal()
   } 
 
   render() {
