@@ -37,6 +37,7 @@ class ProfileView extends React.Component {
   }
 
   render() {
+    const modalData = this.state.modalData
     const lists = this.props.lists.map((list, i) => (
       <View style={{marginBottom: 15}} key={i}>
         <List list={list} key={i} />
@@ -95,10 +96,14 @@ class ProfileView extends React.Component {
 
           <Modal
             isVisible={this.state.showModal}
-            onBackdropPress={this.toggleModal}>
+            onBackdropPress={this.toggleModal}
+            style={{backgroundColor: 'red'}}
+            animationIn={(modalData) ? modalData.modalAnimations.in : 'zoomIn'}
+            animationOut={(modalData) ? modalData.modalAnimations.out : 'zoomOut'}
+          >
 
             <ModalContent 
-              data={this.state.modalData}
+              data={modalData}
               toggleModal={() => {this.toggleModal()}}
             />
           </Modal>

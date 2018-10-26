@@ -165,7 +165,7 @@ class ModalContent extends React.Component {
         break
     }
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, modalData.modalStyle]}>
         {display}
       </View>
     )
