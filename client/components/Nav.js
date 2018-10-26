@@ -1,8 +1,15 @@
 import React from 'react'
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { 
+  StyleSheet, 
+  Text, 
+  View, 
+  Image,
+  TouchableOpacity 
+} from 'react-native'
+import {connect} from 'react-redux'
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default class Nav extends React.Component {
+class Nav extends React.Component {
   constructor(props) {
     super(props) 
     this.handlePress = this.handlePress.bind(this)
@@ -18,7 +25,7 @@ export default class Nav extends React.Component {
         <Icon style={{marginLeft: 20}} name="ellipsis-v" size={25} color="#fff" />
         <Text style={styles.title}>Bookkeeper</Text>
         <TouchableOpacity onPress={() => this.handlePress('Profile')}>
-          <Icon style={{marginRight: 20}} name="user-circle" size={25} color="#fff" />
+          <Image source={require('../assets/images/profileImg.jpg')} style={styles.userImg} />
         </TouchableOpacity>
       </View>
     )
@@ -36,9 +43,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     minHeight: 60
   },
+  userImg: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 20,
+    borderColor: '#fff',
+    borderWidth: 2
+  },  
   title: {
     color: '#fff',
     fontFamily: 'Pacifico',
     fontSize: 20,
   },
 })
+
+const mapStateToProps = (state) => ({
+  user: state.authUser
+})
+
+export default connect(mapStateToProps)(Nav)

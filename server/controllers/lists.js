@@ -18,6 +18,21 @@ router.post('/', (req, res) => {
   });
 });
 
+router.post('/update', (req, res) => {
+  console.log("HIT UPDATE LIST ROUTE")
+  console.log(req.body)
+  db.list.update(req.body.newData, {
+    where: {
+      id: req.body.id
+    }
+  }).then((list) => {
+    res.json({list})
+  }).catch((err) => {
+    console.log("ERROR UPDATING LIST IN DB". err)
+    res.json({err})
+  })
+})
+
 router.delete('/:id', (req, res) => {
   console.log("HIT DELETE LIST ROUTE")
   db.list.destroy({

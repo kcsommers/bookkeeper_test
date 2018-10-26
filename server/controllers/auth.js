@@ -102,7 +102,7 @@ router.get('/verify', verifyToken, (req, res) => {
         where: {username: authData.user},
         include: [{
           model: db.club,
-          include: [db.user, db.post]
+          include: [db.user, {model: db.post, include: [db.user]}]
         }]
       }).then((authUser) => {
         getUserData(authUser).then((data) => {

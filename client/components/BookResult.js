@@ -17,7 +17,7 @@ class BookResult extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      selectedList: this.props.lists[0].name,
+      selectedList: (this.props.lists.length) ? this.props.lists[0].name : "Select",
       message: ''
     }
 
@@ -38,6 +38,7 @@ class BookResult extends React.Component {
       imgUrl: (book.volumeInfo.imageLinks) 
               ? book.volumeInfo.imageLinks.smallThumbnail : '',
       banner: '',
+      current: false,
       userId: this.props.authUser.id
     }
     const list = this.props.lists.find((listObj) => listObj.name === this.state.selectedList)

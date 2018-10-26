@@ -4,76 +4,42 @@ import {
   View,
   ScrollView,
   Image,
-  Text
+  Text,
+  TouchableOpacity
 } from 'react-native'
-import Modal from 'react-native-modal'
 
 import {connect} from 'react-redux'
 import {addQuote, addNote, deleteBook} from '../actions/listsActions'
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 
+import Modal from 'react-native-modal'
+import ModalContent from '../components/ModalContent'
 import Banner from '../components/Banner'
 import Button1 from '../components/Button1'
-import DeleteBtn from '../components/DeleteBtn'
+import IconBtn from '../components/IconBtn'
 import Quote from '../components/Quote'
 import Note from '../components/Note'
-import AddForm from '../components/AddForm'
 
 import missingBookCover from '../assets/images/missingBookCover.jpg'
 import bg7 from '../assets/images/page_backgrounds/bg7.jpg'
-
-import {setFormData} from '../formFunctions.js'
 
 class BookView extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       showModal: false,
-      modalFormData: null,
-      formType: '',
-      book: null
+      modalData: null
     }
     this.toggleModal = this.toggleModal.bind(this)
-    this.setFormData = this.setFormData.bind(this)
-    this.updateoStore = this.updateStore.bind(this)
     this.getBookFromStore = this.getBookFromStore.bind(this)
   }
 
   toggleModal() {
-    if(this.state.showModal) {
-      this.setState({showModal: false, formType: ''})
-    }
-    else {
-      this.setState({showModal: true})
-    }
+    this.setState({showModal: !this.state.showModal, modalData: null})
   }
 
-  updateStore(data) {
-    console.log('UPDATE STORE DATA', data)
-    const bookId = this.props.navigation.getParam('bookId')
-    const listId = this.props.navigation.getParam('listId')  
-    if(!data.err) {
-      if(this.state.formType === 'quote') {
-        this.props.addQuote(data.quote, bookId, listId)
-        this.toggleModal()
-      }
-      else if(this.state.formType === 'note') {
-        this.props.addNote(data.note, bookId, listId)
-        this.toggleModal()
-      }
-      else {
-        this.props.deleteBook(bookId, listId)
-        this.props.navigation.navigate('Profile')
-      }
-    }
-  }
-
-  setFormData(type, book) {
-    const data = {
-      user: this.props.user,
-      book: book
-    }
-    const formData = setFormData(type, data)
-    this.setState({modalFormData: formData, showModal: true, formType: type})
+  handleModalTrigger(modalData) {
+    this.setState({modalData, showModal: true})
   }
 
   getBookFromStore(bookId, listId) {
@@ -84,7 +50,8 @@ class BookView extends React.Component {
   }
 
   render() {
-    let book = this.getBookFromStore(this.props.navigation.getParam('bookId'), this.props.navigation.getParam('listId'))
+    let listId = this.props.navigation.getParam('listId')
+    let book = this.getBookFromStore(this.props.navigation.getParam('bookId'), listId)
     let title = (book) ? book.title : ''
     let authors = (book) ? book.authors : ''
     let description = (book) ? book.description : ''
@@ -103,46 +70,59 @@ class BookView extends React.Component {
     return (
       <ScrollView contentContainerStyle={styles.container}>
         <Banner image={bg7} />
+        
+        <View style={styles.wrapper}>
 
-        <View style={styles.bookDetails}>
-          <Image source={imgSrc} style={styles.bookImg} />
-          <Text style={[styles.title, styles.text]}>{title}</Text>
-          <Text style={[styles.authors, styles.text]}>{authors}</Text>
-          <Text style={[styles.description, styles.text]}>{description}</Text>
+          <View style={styles.bookOptionsWrapper}>
+            <IconBtn 
+              name="options"
+              backgroundColor='#fff'
+              iconColor="#444"
+              iconSize={20}
+              circleSize={{width: 40, height: 40, borderRadius: 20, marginTop: 10, marginBottom: 10}}
+              onPress={() => {
+                this.handleModalTrigger({type: 'book-options', book, listId})
+              }}
+            />
+
+            <IconBtn 
+              name="backburger"
+              backgroundColor='rgba(0,0,0,0)'
+              iconColor="#1b9ce2" 
+              iconSize={25}
+              circleSize={{width: 40, height: 40, borderRadius: 20, borderWidth: 2, borderColor: '#1b9ce2'}}
+              onPress={() => {
+                this.props.navigation.navigate('List', {listId})
+              }}
+            />
+          </View>
+
+          <View style={styles.bookDetails}>
+            <Image source={imgSrc} style={styles.bookImg} />
+            <Text style={[styles.title, styles.text]}>{title}</Text>
+            <Text style={styles.authors}>{authors}</Text>
+            <Text style={[styles.description, styles.text]}>{description}</Text>
+          </View>
+
+          <View style={styles.noteWrapper}>
+            <Text style={styles.noteHeader}>Quotes</Text>
+            {quotes}
+          </View>
+
+          <View style={styles.noteWrapper}>
+            <Text style={styles.noteHeader}>Notes</Text>
+            {notes}
+          </View>
         </View>
 
-        <View style={styles.btnsWrapper}>
-          <Button1 
-            color='#71a7a9'
-            textColor='#fff'
-            text='Add Quote'
-            onPress={() => {this.setFormData('quote', book)}} />
-          
-          <Button1 
-            color='#71a7a9' 
-            textColor='#fff'
-            text='Add Note'
-            onPress={() => {this.setFormData('note', book)}} />
-
-          <DeleteBtn
-            data={{id: (book) ? book.id : -1, endpoint: 'books', userId: this.props.user.id}} 
-            type="button"
-            onDelete={(data) => {this.updateStore(data)}} />
-        </View>
-
-        <View style={styles.notesWrapper}>
-          {quotes}
-          {notes}
-        </View>
-
-        <Modal 
+        <Modal
           isVisible={this.state.showModal}
           onBackdropPress={this.toggleModal}>
-          <View style={styles.modalWrapper}>
-            <AddForm 
-              data={this.state.modalFormData}
-              onSubmit={(data) => {this.updateStore(data)}} />
-          </View>
+
+          <ModalContent 
+            data={this.state.modalData}
+            toggleModal={() => {this.toggleModal()}}
+          />
         </Modal>
       </ScrollView>
     )
@@ -153,6 +133,10 @@ const styles = StyleSheet.create({
   bookDetails: {
     alignItems: 'center'
   },  
+  wrapper: {
+    paddingLeft: 15,
+    paddingRight: 15
+  },
   text: {
     fontFamily: 'Merriweather',
     textAlign: 'center'
@@ -160,13 +144,37 @@ const styles = StyleSheet.create({
   bookImg: {
     width: 130,
     height: 200,
-    marginTop: -150
+    marginTop: -150,
+    borderWidth: 2,
+    borderColor: '#fff',
+    borderRadius: 5
   },
-  btnsWrapper: {
+  title: {
+    fontSize: 24,
+    marginTop: 10,
+    marginBottom: 10,
+    color: '#1c4b44'
+  },
+  authors: {
+    fontSize: 18,
+    fontFamily: 'MerrItalic',
+    textAlign: 'center',
+    color: '#888888'
+  },
+  description: {
+    fontSize: 16,
+    marginTop: 10,
+    marginBottom: 10,
+    lineHeight: 25
+  },
+  noteWrapper: {
     alignItems: 'center'
   },
-  notesWrapper: {
-    alignItems: 'center'
+  noteHeader: {
+    fontFamily: 'Merriweather',
+    fontSize: 22,
+    marginBottom: 15,
+    marginTop: 20
   },
   modalWrapper: {
     backgroundColor: '#f1f3ee',

@@ -12,12 +12,16 @@ router.post('/', (req, res) => {
     authors: bookData.authors,
     description: bookData.description,
     imgUrl: bookData.imgUrl,
+    current: bookData.current,
     banner: bookData.banner
   }).then((book) => {
     db.list.findById(listData.id).then((list) => {
       list.addBook(book).then((lB) => {
         db.user.findById(bookData.userId).then((user) => {
           user.addBook(book).then((uB) => {
+            book.dataValues.listsBooks = {listId: list.id, bookId: book.id};
+            book.dataValues.quotes = [];
+            book.dataValues.notes = [];
             res.json({book});
           }).catch((err) => {
             console.log("ERROR ADDING BOOK TO USER", err)
@@ -40,7 +44,7 @@ router.post('/', (req, res) => {
 
 router.get('/', (req, res) => {
   console.log('HIT GET BOOKS ROUTE')
-  const term = req.query.search_term;
+  const term = req.query.q;
   db.book.findAll({
     where: {
       $or: [
@@ -57,8 +61,22 @@ router.get('/', (req, res) => {
   });
 });
 
+router.post('/update', (req, res) => {
+  console.log('HIT UPDAT BOOK ROUTE')
+  db.book.update(req.body.newData, {
+    where: {
+      id: req.body.id
+    }
+  }).then((book) => {
+    res.json({book})
+  }).catch((err) => {
+    console.log("ERROR UPDATING BOOK", err)
+    res.json({err})
+  });
+});
+
 router.delete('/:id', (req, res) => {
-  console.log("HIT DELETE BOOK ROUTE", req.body.data)
+  console.log("HIT DELETE BOOK ROUTE")
   db.book.destroy({
     where: {id: req.params.id}
   }).then((bookResults) => {

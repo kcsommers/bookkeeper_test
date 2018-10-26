@@ -14,23 +14,23 @@ import SearchBar from '../components/SearchBar'
 class SearchResultsView extends React.Component {
   render() {
     const searchTerm = this.props.navigation.getParam('searchTerm', '')
-    const page = this.props.navigation.getParam('page', '')
+    const endPoint = this.props.navigation.getParam('endPoint', '')
     const resultsMapped = this.props.results.map((result, i) => {
-      if(page === 'searchBooks') {
-        return <BookResult book={result} key={i} />
-      }
-      else if(page === 'searchClubs') {
-        return <Club club={result} key={i} />
-      }
-      else if(page === 'searchUsers') {
+      if(endPoint === 'books') {
         const users = result.users.map((user) => <Text>{user.username}</Text>)
         return users
+      }
+      else if(endPoint === 'clubs') {
+        return <Club club={result} key={i} />
+      }
+      else {
+        return <BookResult book={result} key={i} />
       }
     })
 
     return(
       <ScrollView>
-        <SearchBar type="books" styles="full" />
+        <SearchBar endPoint="books/v1/volumes" type="full" />
         <View>
           <Text style={styles.searchTerm}>Showing results for {searchTerm}</Text>
         </View>

@@ -35,10 +35,10 @@ class SearchBox extends React.Component {
       url = `https://www.googleapis.com/books/v1/volumes?q=${this.state.searchTerm}&maxResults=10`
     }
     else if(page === 'searchClubs') {
-      url = `http://localhost:3000/clubs?search_term=${this.state.searchTerm}`
+      url = `http://localhost:3000/clubs?q=${this.state.searchTerm}`
     }
     else if(page === 'searchUsers') {
-      url = `http://localhost:3000/books?search_term=${this.state.searchTerm}`
+      url = `http://localhost:3000/books?q=${this.state.searchTerm}`
     }
 
     try {

@@ -11,16 +11,33 @@ import {setFormData} from '../formFunctions.js'
 
 import {addPost} from '../actions/clubsActions'
 
+import Modal from 'react-native-modal'
+import ModalContent from '../components/ModalContent'
 import bg1 from '../assets/images/page_backgrounds/bg1.jpg'
 import Banner from '../components/Banner'
 import AddForm from '../components/AddForm'
 import Post from '../components/Post'
+import IconBtn from '../components/IconBtn'
 
 class ClubView extends React.Component {
   constructor(props) {
     super(props)
+    this.state = {
+      showModal: false,
+      modalData: null
+    }
+    this.toggleModal = this.toggleModal.bind(this)
+    this.handleModalTrigger = this.handleModalTrigger.bind(this)
     this.updateStore = this.updateStore.bind(this)
     this.getClubFromStore = this.getClubFromStore.bind(this)
+  }
+
+  toggleModal() {
+    this.setState({showModal: !this.state.showModal, modalData: null})
+  }
+
+  handleModalTrigger(modalData) {
+    this.setState({modalData, showModal: true})
   }
 
   updateStore(data) {
@@ -34,45 +51,97 @@ class ClubView extends React.Component {
 
   render() {
     const club = this.getClubFromStore(this.props.navigation.getParam('clubId'))
-    const posts = club.posts.map((post, i) => <Post post={post} key={i} />)
-    const members = club.users.map((user, i) => (
-      <Image 
-        source={require('../assets/images/profileImg.jpg')}
-        style={styles.memberImg}
-        key={i}
-      />
-    ))
-    const formData = setFormData('post', {clubId: club.id, userId: this.props.user.id})
-    return (
-      <ScrollView contentContainerStyle={styles.container}>
-        <Banner image={bg1} />
+    if(club) {
+      const optionsBtn = (club.admin === this.props.user.username) ?
+      <View style={styles.clubOptionsWrapper}>
+        <IconBtn 
+          name="options"
+          backgroundColor='#fff'
+          iconColor="#444"
+          iconSize={20}
+          circleSize={{width: 40, height: 40, borderRadius: 20}}
+          onPress={() => {
+            this.handleModalTrigger({type: 'club-options', club})
+          }}
+        />
+      </View> : ''
 
-        <View style={styles.clubDetails}>
-          <Image source={{uri: club.bookImg}} style={styles.clubImg} />
-          <Text style={[styles.name, styles.text]}>{club.name}</Text>
-          <Text style={[styles.description, styles.text]}>{club.description}</Text>
+      const posts = club.posts.map((post, i) => (
+        <View style={{marginBottom: 15}} key={i}>
+          <Post post={post} key={i} /> 
         </View>
+      ))
+      const members = club.users.map((user, i) => (
+        <Image 
+          source={require('../assets/images/profileImg.jpg')}
+          style={styles.memberImg}
+          key={i}
+        />
+      ))
+      const formData = setFormData('post', {clubId: club.id, userId: this.props.user.id})
+      return (
+        <ScrollView contentContainerStyle={styles.container}>
+          <Banner image={bg1} />
 
-        <View style={styles.membersWrapper}>
-          {members}
-        </View>
+          <View style={styles.wrapper}>
+            <View style={styles.clubDetails}>
+              <Image source={{uri: club.bookImg}} style={styles.clubImg} />
+              <Text style={[styles.name, styles.text]}>{club.name}</Text>
+              <Text style={[styles.description, styles.text]}>{club.description}</Text>
 
-        <View style={styles.postsWrapper}>
-          {posts}
-        </View>
-        <AddForm data={formData} onSubmit={(data) => {this.updateStore(data)}} />
-      </ScrollView>
-    )
+              {optionsBtn}            
+            </View>
+
+            <View style={styles.membersWrapper}>
+              <Text style={styles.header}>Club Members</Text>
+              {members}
+            </View>
+
+            <View style={styles.postsWrapper}>
+              <Text style={styles.header}>Club Posts</Text>
+              {posts}
+            </View>
+            <AddForm data={formData} onSubmit={(data) => {this.updateStore(data)}} />
+          </View>
+
+          <Modal
+            isVisible={this.state.showModal}
+            onBackdropPress={this.toggleModal}>
+
+            <ModalContent 
+              data={this.state.modalData}
+              toggleModal={() => {this.toggleModal()}}
+            />
+          </Modal>
+        </ScrollView>
+      )
+    }
+    else {
+      return null
+    }
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-
+  wrapper: {
+    paddingLeft: 15,
+    paddingRight: 15
   },
   text: {
     fontFamily: 'Merriweather',
     textAlign: 'center'
+  },
+  header: {
+    fontFamily: 'Merriweather',
+    fontSize: 22,
+    marginBottom: 15,
+    marginTop: 20
+  },
+  clubOptionsWrapper: {
+    position: 'absolute',
+    left: 0,
+    top: 15,
+    zIndex: 100
   },
   clubDetails: {
     justifyContent: 'center',
@@ -81,18 +150,27 @@ const styles = StyleSheet.create({
   clubImg: {
     width: 130,
     height: 200,
-    marginTop: -150
+    marginTop: -150,
+    borderWidth: 2,
+    borderColor: '#fff'
   },
   name: {
-
+    fontSize: 25,
+    color: '#1c4b44',
+    marginTop: 10,
+    marginBottom: 10
   },
    description: {
-
+    fontSize: 16,
+    color: '#444',
+    lineHeight: 25
    },
    memberImg: {
-     width: 100,
-     height: 100,
-     borderRadius: 50
+     width: 60,
+     height: 60,
+     borderRadius: 30,
+     borderWidth: 2,
+     borderColor: '#fff'
    }
 })
 

@@ -3,65 +3,106 @@ import {
   StyleSheet, 
   View, 
   ScrollView, 
-  Text, 
-  TextInput,
-  TouchableOpacity,
-  Image
- } from 'react-native'
- import axios from 'axios'
- import {connect} from 'react-redux'
- import {setAuthUser, addList} from '../actions/authUserActions'
- import List from '../components/List'
- import AddList from '../components/AddList'
- import profileImg from '../assets/images/profileImg.jpg'
- import Club from '../components/Club'
+  Text,
+  TouchableOpacity
+} from 'react-native'
+import {connect} from 'react-redux'
+import {addList, addNote, addQuote} from '../actions/listsActions'
+import Icon from 'react-native-vector-icons/FontAwesome'
+
+import Modal from 'react-native-modal'
+import ModalContent from '../components/ModalContent'
+import SearchBar from '../components/SearchBar'
+import List from '../components/List'
+import Book from '../components/Book'
+import Club from '../components/Club'
 
 class ProfileView extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      listName: ''
+      showModal: false,
+      modalData: null
     }
-    this.handleChangeText = this.handleChangeText.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
+    this.toggleModal = this.toggleModal.bind(this)
+    this.handleModalTrigger = this.handleModalTrigger.bind(this)
   }
 
-  handleChangeText(text) {
-    this.setState({listName: text})
+  toggleModal() {
+    this.setState({showModal: !this.state.showModal, modalData: null})
   }
 
-  async handleSubmit() {
-    const url = 'http://localhost:3000/lists'
-    const list = {
-      name: this.state.listName,
-      userId: this.props.user.id
-    }
-    const results = await axios.post(url, list)
-    if(!results.data.err) {
-      this.props.addList(results.data.list)
-    }
+  handleModalTrigger(modalData) {
+    this.setState({modalData, showModal: true})
   }
 
   render() {
-    const user = this.props.user
-    const lists = this.props.lists.map((list, i) => <List list={list} key={i} />)
-    const clubs = this.props.clubs.map((club, i) => <Club club={club} key={i} />)
+    const lists = this.props.lists.map((list, i) => (
+      <View style={{marginBottom: 15}} key={i}>
+        <List list={list} key={i} />
+      </View>
+    ))
+    const clubs = this.props.clubs.map((club, i) => (
+      <View style={{marginBottom: 15}} key={i}>
+        <Club club={club} key={i} />
+      </View>
+    ))
+    const currentReads = []
+    this.props.lists.forEach((list) => {
+      list.books.forEach((book) => { if(book.current) {currentReads.push(book)} })
+    })
+    const currentsDisplay = (currentReads.length) ? 
+    currentReads.map((book, i) => (
+      <ScrollView key={i}>
+        <Book 
+          book={book} 
+          key={i} 
+          modalTrigger={(data) => this.handleModalTrigger(data)} />
+      </ScrollView>
+    ))
+    :
+    <Text>You are not currently reading anything!</Text>
+
+
     return (
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.userIntro}>
-          <View style={styles.userIntroWrapper}>
-            <Image source={profileImg} style={styles.profileImg}/>
-            <Text style={styles.userName}>{user.username}</Text>
+        <SearchBar 
+          type="full"
+          endPoint="books/v1/volumes" />
+
+        <View style={styles.profileWrapper}>
+          <View style={styles.currentReadsContainer}>
+            <Text style={[styles.header]}>Current Reads</Text>
+            {currentsDisplay}
           </View>
-        </View>
-        <View style={styles.sectionContainer}>
-          <Text style={styles.header}>My Lists</Text>
-          {lists}
-          <AddList />
-        </View>
-        <View style={styles.sectionContainer}>
-          <Text style={styles.header}>My Clubs</Text>
-          {clubs}
+
+          <View style={styles.listsContainer}>
+            <Text style={[styles.header]}>My Lists</Text>
+            {lists}
+            <View style={styles.addListWrapper}>
+              <TouchableOpacity style={styles.addListBtn} onPress={() => {
+                this.handleModalTrigger({type: 'list'})
+              }}>
+                <Icon name="plus" size={25} color="#1b9ce2" />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.clubsContainer}>
+            <Text style={[styles.header]}>My Clubs</Text>
+            {clubs}
+          </View>
+
+          <Modal
+            isVisible={this.state.showModal}
+            onBackdropPress={this.toggleModal}>
+
+            <ModalContent 
+              data={this.state.modalData}
+              toggleModal={() => {this.toggleModal()}}
+            />
+          </Modal>
+
         </View>
       </ScrollView>
     )
@@ -69,40 +110,35 @@ class ProfileView extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-
-  },  
-  userIntro: {
-    backgroundColor: '#1c4b44',
-    marginBottom: 85
+  profileWrapper: {
   },
-  userIntroWrapper: {
-    position: 'relative',
-    alignItems: 'center',
-    top: 70
-  },
-  profileImg: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    borderWidth: 3,
-    borderColor: '#fff',
-  },
-  userName: {
-    fontFamily: 'Merriweather',
-    fontSize: 24,
-    marginTop: 10
-  },
-  sectionContainer: {
-    paddingTop: 15,
-    paddingLeft: 15,
-    paddingRight: 15
+  currentReadsContainer: {
+    padding: 15
   },
   header: {
-    fontSize: 20,
-    textAlign: 'center',
     fontFamily: 'Merriweather',
-    marginBottom: 15
+    fontSize: 22,
+    marginBottom: 10
+  },
+  listsContainer: {
+    padding: 15
+  },
+  addListWrapper: {
+    paddingTop: 15,
+    paddingBottom: 15
+  },
+  addListBtn: {
+    borderWidth: 1,
+    borderColor: '#444',
+    borderStyle: 'dashed',
+    paddingTop: 15,
+    paddingBottom: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5
+  },
+  clubsContainer: {
+    padding: 15
   }
 })
 
@@ -111,5 +147,5 @@ const mapStateToProps = state => ({
   lists: state.lists,
   clubs: state.clubs
 })
-const mapActionsToProps = {setAuthUser, addList} 
+const mapActionsToProps = {addList, addNote, addQuote} 
 export default connect(mapStateToProps, mapActionsToProps)(ProfileView)

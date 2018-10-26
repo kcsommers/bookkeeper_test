@@ -8,7 +8,7 @@ import {
 } from 'react-native'
 import axios from 'axios'
 
-class AddForm extends React.Component {
+class UpdateForm extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -20,18 +20,25 @@ class AddForm extends React.Component {
   async handleSubmit(formData) {
     const url = formData.httpData.url
     let postData = {}
+
     formData.formFields.forEach((field) => {
       postData[field.field] = field.value
     })
 
-    formData.modelFields.forEach((item) => {
-      postData[item.type] = item.value
-    })
+    const data = {newData: postData, id: this.props.itemId}
 
-    postData.miscData = formData.miscData
-
-    const results = await axios.post(url, postData)
-    return results.data
+    try{
+      const results = await axios.post(url, data)
+      if(!results.data.err) {
+        return data 
+      }
+      else {
+        console.log("ERROR UPDATING ITEM", err)
+      }
+    }
+    catch(err) {
+      console.log('CAUGHT ERROR UPDATING ITEM', err)
+    }
   }
 
   handleChange(value, field) {
@@ -114,4 +121,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default AddForm
+export default UpdateForm

@@ -4,12 +4,12 @@ import {
   View,
   Text,
   ScrollView,
+  Image,
   TouchableOpacity
 } from 'react-native'
 import {withNavigation} from 'react-navigation'
-import Book from './Book'
-import Icon from 'react-native-vector-icons/FontAwesome'
 
+import missingBookCover from '../assets/images/missingBookCover.jpg'
 
 class List extends React.Component {
   constructor(props) {
@@ -18,76 +18,70 @@ class List extends React.Component {
 
   render() {
     const list = this.props.list
-    const books = (list.books && list.books.length) ?
-    list.books.map((book, i) => <Book book={book} list={list} key={i} />) :
-    ''
-    const noBooks = (!list.books || !list.books.length) ? (
-      <View style={styles.noBooksWrapper}>
-        <Text style={styles.noBooks}>No Books Just Yet</Text>
-      </View>
-    ) : ''
+    let bookDisplay = <Text>No books just yet</Text>
+    let bookImages = []
+    let imgContainerStyle, imgStyle
+    if(list.books.length) {
+      if(list.books.length < 4) {
+        imgContainerStyle = ''
+        imgStyle = {marginRight: 10}
+      }
+      else {
+        imgContainerStyle = {justifyContent: 'space-between'}
+        imgStyle = ''
+      }
+
+      list.books.forEach((book, i) => {
+        if(i < 4) {
+          let imgSrc = (book.imgUrl) ? {uri: book.imgUrl} : missingBookCover
+          let bookImg = <Image 
+                          source={imgSrc}
+                          key={i} 
+                          style={[styles.bookImg, imgStyle]} />
+          bookImages.push(bookImg)
+        }
+      })
+
+      bookDisplay = bookImages
+    }
 
     return (
-      <View style={styles.listWrapper}>
-        <View style={styles.listHeader}>
-          <Text style={styles.listName}>{list.name}</Text>
-          <View style={styles.listIcons}>
-            <TouchableOpacity 
-              onPress={() => {this.props.navigation.navigate('List', {listId: list.id})}}>
-              <Icon name="th-list" size={25} color="#1b9ce2" />
-            </TouchableOpacity>
-          </View>
+      <TouchableOpacity style={styles.listWrapper} onPress={() => {
+        this.props.navigation.navigate('List', {listId: list.id})
+      }}>
+        <View>
+          <Text style={styles.listTitle}>{list.name}</Text>
         </View>
-
-        <ScrollView
-          horizontal={true}
-          contentContainerStyle={styles.bookSlider}
-          pagingEnabled={true}
-          showsHorizontalScrollIndicator={false}
-        >
-        {books}
-        </ScrollView>
-        {noBooks}
-      </View>
+        <View style={[styles.bookImgs, imgContainerStyle]}>
+          {bookDisplay}
+        </View>
+      </TouchableOpacity>
     )
   }
 }
 
 const styles = StyleSheet.create({
   listWrapper: {
-
-  }, 
-  listHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingLeft: 15,
-    paddingRight: 15
-  },
-  listIcons: {
-
-  },
-  listName: {
-    fontFamily: 'Merriweather',
-    fontSize: 16,
-  },
-  bookSlider: {
-
-  },
-  noBooksWrapper: {
-    padding: 15
-  },  
-  noBooks: {
-    backgroundColor: '#fff',
-    textAlign: 'center',
+    borderRadius: 5,
     shadowColor: '#000',
     shadowOpacity: 0.2,
     shadowOffset: {width: 1, height: 2},
     shadowRadius: 2,
-    fontSize: 16,
+    backgroundColor: '#fff',
+    padding: 15
+  },
+  bookImgs: {
+    flexDirection: 'row',
+    flex: 1
+  },  
+  bookImg: {
+    width: 75,
+    height: 115,
+  },
+  listTitle: {
     fontFamily: 'Merriweather',
-    paddingTop: 20,
-    paddingBottom: 20,
-    borderRadius: 5
+    fontSize: 18,
+    marginBottom: 10
   }
 })
 
