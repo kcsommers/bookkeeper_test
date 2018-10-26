@@ -11,12 +11,12 @@ import {
 import {connect} from 'react-redux'
 import {addQuote, addNote, deleteBook} from '../actions/listsActions'
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
-import FontIcon from 'react-native-vector-icons/FontAwesome'
 
 import Modal from 'react-native-modal'
 import ModalContent from '../components/ModalContent'
 import Banner from '../components/Banner'
 import Button1 from '../components/Button1'
+import IconBtn from '../components/IconBtn'
 import Quote from '../components/Quote'
 import Note from '../components/Note'
 
@@ -73,25 +73,35 @@ class BookView extends React.Component {
         
         <View style={styles.wrapper}>
 
-          <TouchableOpacity>
-            <MaterialIcon name="backburger" size={25} color="#1b9ce2" />
-          </TouchableOpacity>
+          <View style={styles.bookOptionsWrapper}>
+            <IconBtn 
+              name="options"
+              backgroundColor='#fff'
+              iconColor="#444"
+              iconSize={20}
+              circleSize={{width: 40, height: 40, borderRadius: 20, marginTop: 10, marginBottom: 10}}
+              onPress={() => {
+                this.handleModalTrigger({type: 'book-options', book, listId})
+              }}
+            />
+
+            <IconBtn 
+              name="backburger"
+              backgroundColor='rgba(0,0,0,0)'
+              iconColor="#1b9ce2" 
+              iconSize={25}
+              circleSize={{width: 40, height: 40, borderRadius: 20, borderWidth: 2, borderColor: '#1b9ce2'}}
+              onPress={() => {
+                this.props.navigation.navigate('List', {listId})
+              }}
+            />
+          </View>
 
           <View style={styles.bookDetails}>
             <Image source={imgSrc} style={styles.bookImg} />
             <Text style={[styles.title, styles.text]}>{title}</Text>
             <Text style={styles.authors}>{authors}</Text>
             <Text style={[styles.description, styles.text]}>{description}</Text>
-          </View>
-
-          <View style={styles.btnsWrapper}>
-            <Button1 
-              color='#fff'
-              textColor='#444'
-              text='Options'
-              onPress={() => {
-                this.handleModalTrigger({type: 'options', book, listId})
-              }} />
           </View>
 
           <View style={styles.noteWrapper}>
@@ -156,9 +166,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
     lineHeight: 25
-  },
-  btnsWrapper: {
-    alignItems: 'center'
   },
   noteWrapper: {
     alignItems: 'center'

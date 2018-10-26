@@ -10,8 +10,9 @@ import axios from 'axios'
 import {connect} from 'react-redux'
 import {updateBook} from '../actions/listsActions'
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
+import FontIcon from 'react-native-vector-icons/FontAwesome'
 
-class ModalOptions extends React.Component {
+class ModalBookOptions extends React.Component {
 
   constructor(props) {
     super(props)
@@ -21,12 +22,9 @@ class ModalOptions extends React.Component {
   async toggleCurrentRead(book) {
     const isCurrent = !book.current
     const url = 'http://localhost:3000/books/update'
-    const data = {newData: {current: isCurrent}, bookId: book.id}
+    const data = {newData: {current: isCurrent}, id: book.id}
     const updatedBook = await axios.post(url, data)
-    this.props.updateBook({
-      newData: {current: isCurrent}, 
-      bookId: book.id
-    }, book.listsBooks.listId)
+    this.props.updateBook(data, book.listsBooks.listId)
     this.props.toggleModal()
   } 
 
@@ -71,6 +69,13 @@ class ModalOptions extends React.Component {
           <Text style={styles.optionText}>Start a Club</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity style={styles.modalOption} onPress={() => {
+          this.props.triggerEditForm('book', book)
+        }}>
+          <FontIcon name="edit" size={25} color="#444" />
+          <Text style={styles.optionText}>Edit Book</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.modalOption} onPress={this.props.onDelete}>
           <MaterialIcon name="delete" size={25} color="#444" />
           <Text style={styles.optionText}>Remove From List</Text>
@@ -101,4 +106,4 @@ const mapStateToProps = (state) => ({
 
 const mapActionsToProps = {updateBook}
 
-export default withNavigation(connect(mapStateToProps, mapActionsToProps)(ModalOptions))
+export default withNavigation(connect(mapStateToProps, mapActionsToProps)(ModalBookOptions))

@@ -5,25 +5,32 @@ import {
 } from 'react-native'
 import SimpleLineIcon from 'react-native-vector-icons/SimpleLineIcons';
 import FoundationIcon from 'react-native-vector-icons/Foundation'
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 const IconBtn = (props) => {
   let button
   switch(props.name) {
-    case 'note':
-      button = <SimpleLineIcon name={props.name} size={25} color={props.iconColor} />
+    case 'notebook':
+      button = <SimpleLineIcon name={props.name} size={props.iconSize} color={props.iconColor} />
       break
     case 'quote':
-      button = <FoundationIcon name={props.name} size={25} color={props.iconColor} />
+      button = <FoundationIcon name={props.name} size={props.iconSize} color={props.iconColor} />
       break
     case 'options':
-      button = <SimpleLineIcon name={props.name} size={25} color={props.iconColor} />
+      button = <SimpleLineIcon name={props.name} size={props.iconSize} color={props.iconColor} />
+      break
+    case 'backburger':
+      console.log(props.name)
+      button = <MaterialIcon name={props.name} size={props.iconSize} color={props.iconColor} />
+      break
+
   }
 
 
   
   return (
     <TouchableOpacity 
-      style={[styles.wrapper, {backgroundColor: props.backgroundColor}]} 
+      style={[styles.wrapper, props.circleSize, {backgroundColor: props.backgroundColor}]} 
       onPress={props.onPress}>
       {button}
     </TouchableOpacity>
@@ -32,10 +39,6 @@ const IconBtn = (props) => {
 
 const styles = StyleSheet.create({
   wrapper: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#71a7a9',
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',

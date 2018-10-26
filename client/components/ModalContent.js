@@ -15,10 +15,14 @@ import{
   addNote, 
   addQuote
 } from '../actions/listsActions'
-import ModalOptions from './ModalOptions'
+import {addClub} from '../actions/clubsActions'
+import ModalBookOptions from './ModalBookOptions'
+import ModalListOptions from './ModalListOptions'
+import ModalClubOptions from './ModalClubOptions'
 import AddForm from './AddForm'
 import ModalNotes from './ModalNotes'
 import ModalQuotes from './ModalQuotes'
+import ModalEdit from './ModalEdit'
 import ModalConfirm from './ModalConfirm'
 
 class ModalContent extends React.Component {
@@ -30,6 +34,7 @@ class ModalContent extends React.Component {
       formType: ''
     }
     this.triggerForm = this.triggerForm.bind(this)
+    this.triggerEditForm = this.triggerEditForm.bind(this)
   }
 
   updateStore(newData) {
@@ -49,7 +54,8 @@ class ModalContent extends React.Component {
         this.props.addQuote(newData.quote, bookId, listId)
         break
       case 'club-start':
-        this.props.navigation.navigate('Club')
+        this.props.addClub(newData.club)
+        this.props.navigation.navigate('Club', {clubId: newData.club.id})
         break
     }
     this.props.toggleModal()
@@ -58,6 +64,13 @@ class ModalContent extends React.Component {
   confirm(type) {
     this.setState((prevState) => ({
       modalData: {...prevState.modalData, type: `confirm-${type}`}
+    }))
+  }
+
+  triggerEditForm(type, item) {
+    this.setState((prevState) => ({
+      formType: type,
+      modalData: {...prevState.modalData, type: 'edit', item, book: null}
     }))
   }
 
@@ -91,20 +104,64 @@ class ModalContent extends React.Component {
       case 'quotes':
         display = <ModalQuotes book={modalData.book} />
         break
-      case 'options':
-        display = <ModalOptions 
+      case 'book-options':
+        display = <ModalBookOptions 
                     book={modalData.book}
                     triggerForm={(type) => {this.triggerForm(type)}}
+                    triggerEditForm={(type, item) => {
+                      this.triggerEditForm(type, item)
+                    }}
                     toggleModal={() => {this.props.toggleModal()}}
                     onDelete={() => {this.confirm('delete-book')}} />
+        break
+      case 'list-options':
+        display = <ModalListOptions 
+                    list={modalData.list}
+                    triggerEditForm={(type, item) => {
+                      this.triggerEditForm(type, item)
+                    }}
+                    toggleModal={() => {this.props.toggleModal()}}
+                    onDelete={() => {this.confirm('delete-list')}}
+        />
+        break
+      case 'club-options':
+        display = <ModalClubOptions 
+                    club={modalData.club}
+                    triggerEditForm={(type, item) => {
+                      this.triggerEditForm(type, item)
+                    }}
+                    toggleModal={() => {this.props.toggleModal()}}
+                    onDelete={() => {this.confirm('delete-club')}}
+        />
         break
       case 'form':
         display = <AddForm 
                     data={this.state.formData}
                     onSubmit={(data) => {this.updateStore(data)}} />
         break
+      case 'edit':
+        display = <ModalEdit 
+                    type={this.state.formType}
+                    toggleModal={() => {this.props.toggleModal()}} 
+                    data={modalData} />
+        break
       case 'confirm-delete-book':
-        display = <ModalConfirm type="delete-book" />
+        display = <ModalConfirm 
+                    type="delete-book" 
+                    data={modalData}
+                    toggleModal={() => {this.props.toggleModal()}} />
+        break
+      case 'confirm-delete-list':
+        display = <ModalConfirm 
+                    type="delete-list" 
+                    data={modalData}
+                    toggleModal={() => {this.props.toggleModal()}} />
+        break
+      case 'confirm-delete-club':
+        display = <ModalConfirm 
+                    type="delete-club" 
+                    data={modalData}
+                    toggleModal={() => {this.props.toggleModal()}} />
         break
     }
     return (
@@ -133,7 +190,8 @@ const mapActionsToProps = {
   deleteBook, 
   updateBook, 
   addNote, 
-  addQuote
+  addQuote,
+  addClub
 }
 
 export default withNavigation(connect(mapStateToProps, mapActionsToProps)(ModalContent))

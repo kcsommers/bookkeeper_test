@@ -5,7 +5,6 @@ const db = require('../models');
 
 router.post('/', (req, res) => {
   console.log('HIT CREATE ClUB ROUTE')
-  console.log(req.body)
   db.club.create({
     name: req.body.name,
     description: req.body.description,
@@ -18,7 +17,8 @@ router.post('/', (req, res) => {
       db.book.findById(req.body.miscData.bookId).then((book) => {
         club.addUser(user);
         club.addBook(book).then((result) => {
-          console.log('RESULT', result)
+          club.dataValues.posts = []
+          club.dataValues.users = [user]
           res.json({club})
         }).catch((err) => {
           console.log('ERROR ADDING BOOK TO CLUB', err)
@@ -78,6 +78,18 @@ router.get('/', (req, res) => {
     res.json({items: clubs})
   }).catch((err) => {
     console.log('ERROR FINDING CLUBS', err)
+    res.json({err})
+  })
+});
+
+router.delete('/:id', (req, res) => {
+  console.log("HIT DELETE CLUB ROUTE")
+  db.club.destroy({
+    where: {id: req.params.id}
+  }).then((results) => {
+    res.json({results})
+  }).catch((err) => {
+    console.log("ERROR DELETING CLUB FROM DB", err)
     res.json({err})
   })
 });

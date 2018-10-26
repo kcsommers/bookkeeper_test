@@ -4,11 +4,12 @@ import {
   View,
   Text
 } from 'react-native'
+import Note from './Note'
 
 const ModalNotes = (props) => {
   const notes = (props.book.notes.length) ?
 props.book.notes.map((note, i) => {
-    return <Text key={i}>{note.content}</Text>
+    return <Note note={note} key={i} />
   })
   :
   <Text>No Notes Just Yet</Text>

@@ -1,5 +1,6 @@
 import {
   SET_LISTS,
+  UPDATE_LIST,
   ADD_BOOK,
   DELETE_BOOK,
   UPDATE_BOOK,
@@ -16,6 +17,21 @@ const listsReducer = (state = [], {type, payload}) => {
       return payload.lists
     case ADD_LIST:
       return [payload.list, ...state]
+    case UPDATE_LIST:
+      console.log(payload.listData.id)
+      listIndex = state.findIndex((listObj) => listObj.id === payload.listData.id)
+
+      listUpdated = state.find((listObj) => listObj.id === payload.listData.id)
+
+
+      listUpdated.name = payload.listData.newData.name
+
+      return [
+        ...state.slice(0, listIndex),
+        listUpdated,
+        ...state.slice(listIndex + 1)
+      ]
+      
     case DELETE_LIST:
       listIndex = state.findIndex((listObj) => listObj.id === payload.listId)
       return [
@@ -34,9 +50,9 @@ const listsReducer = (state = [], {type, payload}) => {
       ]
     case UPDATE_BOOK:
       listIndex = state.findIndex((listObj) => listObj.id === payload.listId)
-      bookIndex = state[listIndex].books.findIndex((bookObj) => bookObj.id === payload.bookData.bookId)
+      bookIndex = state[listIndex].books.findIndex((bookObj) => bookObj.id === payload.bookData.id)
 
-      bookUpdated = state[listIndex].books.find((bookObj) => bookObj.id === payload.bookData.bookId)
+      bookUpdated = state[listIndex].books.find((bookObj) => bookObj.id === payload.bookData.id)
 
       for(key in bookUpdated) {
         for(field in payload.bookData.newData) {
@@ -48,11 +64,15 @@ const listsReducer = (state = [], {type, payload}) => {
       }
       
       listUpdated = state.find((listObj) => listObj.id === payload.listId)
+      console.log(bookIndex)
+      console.log('NOT UPDATED', listUpdated.books)
       listUpdated.books = [
         ...listUpdated.books.slice(0, bookIndex),
         bookUpdated,
         ...listUpdated.books.slice(bookIndex + 1)
       ]
+
+      console.log('UPDATED', listUpdated.books)
 
       return [
         ...state.slice(0, listIndex),

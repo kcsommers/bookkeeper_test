@@ -7,7 +7,6 @@ import {
   TouchableOpacity
 } from 'react-native'
 import {handleDelete} from '../formFunctions'
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 
 import {connect} from 'react-redux'
 import {
@@ -20,6 +19,7 @@ import {
 import Modal from 'react-native-modal'
 import ModalContent from '../components/ModalContent'
 import Book from '../components/Book'
+import IconBtn from '../components/IconBtn'
 
 class ListView extends React.Component {
   constructor(props) {
@@ -28,17 +28,12 @@ class ListView extends React.Component {
       showModal: false,
       modalData: null
     }
-    this.updateStore = this.updateStore.bind(this)
     this.toggleModal = this.toggleModal.bind(this)
     this.handleModalTrigger = this.handleModalTrigger.bind(this)
   }
 
   toggleModal() {
     this.setState({showModal: !this.state.showModal, modalData: null})
-  }
-
-  updateStore(data) {
-    
   }
 
   handleModalTrigger(modalData) {
@@ -53,54 +48,51 @@ class ListView extends React.Component {
   render() {
     const listId = this.props.navigation.getParam('listId')
     const list = this.getListFromStore(listId)
-    const books = list.books.map((book, i) => (
-      <View key={i} style={styles.bookRow}>
-        <Book 
-          book={book} 
-          modalTrigger={(data) => this.handleModalTrigger(data)}
-          key={i} />
-      </View>)
-    )
-    return (
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.listHeader}>
-          <View style={styles.iconsWrapper}>
-            <TouchableOpacity 
-              style={styles.listOption} 
-              onPress={() => {
+    if(list) {
+      const books = list.books.map((book, i) => (
+        <View key={i} style={styles.bookRow}>
+          <Book 
+            book={book} 
+            modalTrigger={(data) => this.handleModalTrigger(data)}
+            key={i} />
+        </View>)
+      )
+      return (
+        <ScrollView contentContainerStyle={styles.container}>
+          <View style={styles.listHeader}>
+            <View style={styles.listOptionsWrapper}>
+              <IconBtn 
+                name="options"
+                backgroundColor='#fff'
+                iconColor="#444"
+                iconSize={20}
+                circleSize={{width: 40, height: 40, borderRadius: 20}}
+                onPress={() => {
+                  this.handleModalTrigger({type: 'list-options', list})
+                }}
+              />
+            </View>
 
-              }}>
-              <MaterialIcon name="edit" size={25} color="#1b9ce2" />
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.listOption} 
-              onPress={() => {
-                handleDelete({
-                  type: 'delete-list',
-                  id: listId,
-                  endpoint: 'lists'
-                }, this.updateStore)
-              }}>
-              <MaterialIcon name="delete" size={25} color="#1b9ce2" />
-            </TouchableOpacity>
+            <Text style={styles.listName} >{list.name}</Text>
           </View>
 
-          <Text style={styles.listName} >{list.name}</Text>
-        </View>
+          {books}
+          
+          <Modal
+            isVisible={this.state.showModal}
+            onBackdropPress={this.toggleModal}>
 
-        {books}
-        
-        <Modal
-          isVisible={this.state.showModal}
-          onBackdropPress={this.toggleModal}>
-
-          <ModalContent 
-            data={this.state.modalData}
-            toggleModal={() => {this.toggleModal()}}
-          />
-        </Modal>
-      </ScrollView>
-    )
+            <ModalContent 
+              data={this.state.modalData}
+              toggleModal={() => {this.toggleModal()}}
+            />
+          </Modal>
+        </ScrollView>
+      )
+    }
+    else {
+      return null
+    }
   }
 }
 
@@ -113,14 +105,10 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     paddingBottom: 15
   },
-  iconsWrapper: {
+  listOptionsWrapper: {
     position: 'absolute',
-    flexDirection: 'row',
-    right: 0,
+    left: 0,
     zIndex: 100
-  },
-  listOption: {
-    padding: 5
   },
   listName: {
     fontFamily: 'Merriweather',

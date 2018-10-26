@@ -7,7 +7,6 @@ import {
 } from 'react-native'
 
 const Button1 = (props) => {
-  console.log(props)
   return (
     <TouchableOpacity 
       style={[styles.btn, {backgroundColor: props.color}]}

@@ -6,7 +6,6 @@ import {
 } from 'react-native'
 
 const Post = (props) => {
-  console.log(props.post)
   return (
     <View style={styles.wrapper}>
       <View style={styles.dateWrapper}>

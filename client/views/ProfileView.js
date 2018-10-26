@@ -42,7 +42,7 @@ class ProfileView extends React.Component {
         <List list={list} key={i} />
       </View>
     ))
-    const clubs = this.props.user.clubs.map((club, i) => (
+    const clubs = this.props.clubs.map((club, i) => (
       <View style={{marginBottom: 15}} key={i}>
         <Club club={club} key={i} />
       </View>

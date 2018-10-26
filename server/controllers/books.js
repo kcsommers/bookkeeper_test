@@ -65,7 +65,7 @@ router.post('/update', (req, res) => {
   console.log('HIT UPDAT BOOK ROUTE')
   db.book.update(req.body.newData, {
     where: {
-      id: req.body.bookId
+      id: req.body.id
     }
   }).then((book) => {
     res.json({book})

@@ -30,9 +30,11 @@ class Book extends React.Component {
             <Text style={styles.authors}>{book.authors}</Text>
             <View style={styles.bookButtons}>
               <IconBtn 
-                name="note"
+                name="notebook"
                 backgroundColor='#71a7a9'
                 iconColor="#fff" 
+                iconSize={25}
+                circleSize={{width: 60, height: 60, borderRadius: 30}}
                 onPress={() => {
                   this.props.modalTrigger({
                     type: 'notes', book, listId: book.listsBooks.listId
@@ -42,6 +44,8 @@ class Book extends React.Component {
                 name="quote" 
                 backgroundColor="#71a7a9"
                 iconColor="#fff"
+                iconSize={25}
+                circleSize={{width: 60, height: 60, borderRadius: 30}}
                 onPress={() => {
                   this.props.modalTrigger({
                     type: 'quotes', book, listId: book.listsBooks.listId
@@ -51,9 +55,11 @@ class Book extends React.Component {
                 name="options" 
                 backgroundColor="#fff"
                 iconColor="#444"
+                iconSize={25}
+                circleSize={{width: 60, height: 60, borderRadius: 30}}
                 onPress={() => {
                   this.props.modalTrigger({
-                    type: 'options', book, listId: book.listsBooks.listId
+                    type: 'book-options', book, listId: book.listsBooks.listId
                   })
                 }} />
             </View>
