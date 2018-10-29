@@ -49,6 +49,7 @@ class ModalEdit extends React.Component {
   }
 
   render() {
+    console.log('KJKJHKJHKJHK', this.props.type)
     return (
       <View style={styles.wrapper}>
         <UpdateForm 

@@ -4,7 +4,8 @@ import {
   View,
   Text,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
+  Dimensions
 } from 'react-native'
 import {withNavigation} from 'react-navigation'
 import missingBookCover from '../assets/images/missingBookCover.jpg'
@@ -37,7 +38,16 @@ class Book extends React.Component {
                 circleSize={{width: 60, height: 60, borderRadius: 30}}
                 onPress={() => {
                   this.props.modalTrigger({
-                    type: 'notes', book, listId: book.listsBooks.listId
+                    type: 'notes', 
+                    book, 
+                    listId: book.listsBooks.listId,
+                    modalStyle: {
+                      flex: 1
+                    },
+                    modalAnimations: {
+                      in: 'zoomIn',
+                      out: 'zoomOut'
+                    }
                   })
                 }} />
               <IconBtn 
@@ -48,7 +58,16 @@ class Book extends React.Component {
                 circleSize={{width: 60, height: 60, borderRadius: 30}}
                 onPress={() => {
                   this.props.modalTrigger({
-                    type: 'quotes', book, listId: book.listsBooks.listId
+                    type: 'quotes', 
+                    book, 
+                    modalStyle: {
+                      flex: 1
+                    },
+                    modalAnimations: {
+                      in: 'zoomIn',
+                      out: 'zoomOut'
+                    },
+                    listId: book.listsBooks.listId
                   })
                 }} />
               <IconBtn 
@@ -59,7 +78,16 @@ class Book extends React.Component {
                 circleSize={{width: 60, height: 60, borderRadius: 30}}
                 onPress={() => {
                   this.props.modalTrigger({
-                    type: 'book-options', book, listId: book.listsBooks.listId
+                    type: 'book-options', 
+                    book, 
+                    modalStyle: {
+
+                    },
+                    modalAnimations: {
+                      in: 'slideInUp',
+                      out: 'slideOutDown'
+                    },
+                    listId: book.listsBooks.listId
                   })
                 }} />
             </View>
@@ -73,7 +101,10 @@ class Book extends React.Component {
 const styles = StyleSheet.create({
   bookContainer: {
     flexDirection: 'row',
-    flex: 1
+    flex: 1,
+    width: Dimensions.get('window').width,
+    paddingLeft: 15,
+    paddingRight: 15,
   },
   bookLeft: {
     flex: 1

@@ -5,7 +5,8 @@ import {
 } from 'react-native'
 import SimpleLineIcon from 'react-native-vector-icons/SimpleLineIcons';
 import FoundationIcon from 'react-native-vector-icons/Foundation'
-import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
+import MaterialCommIcon from 'react-native-vector-icons/MaterialCommunityIcons'
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 
 const IconBtn = (props) => {
   let button
@@ -20,9 +21,11 @@ const IconBtn = (props) => {
       button = <SimpleLineIcon name={props.name} size={props.iconSize} color={props.iconColor} />
       break
     case 'backburger':
-      console.log(props.name)
-      button = <MaterialIcon name={props.name} size={props.iconSize} color={props.iconColor} />
+      button = <MaterialCommIcon name={props.name} size={props.iconSize} color={props.iconColor} />
       break
+    case 'add':
+      button = <MaterialIcon name={props.name} size={props.iconSize} color={props.iconColor} />
+
 
   }
 

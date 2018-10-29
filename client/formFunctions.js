@@ -1,4 +1,5 @@
 import axios from 'axios'
+import Environment from './environment'
 
 export const setFormData = (type, data) => {
   let formFields = []
@@ -9,7 +10,7 @@ export const setFormData = (type, data) => {
 
   switch(type) {
     case 'list':
-      url = 'http://localhost:3000/lists'
+      url = `${Environment.BASE_URL}/lists`
       formFields.push({
         field: 'name',
         placeholder: 'List Name',
@@ -21,7 +22,7 @@ export const setFormData = (type, data) => {
       })
       break
     case 'note':
-      url = 'http://localhost:3000/notes'
+      url = `${Environment.BASE_URL}/notes`
       formFields.push({
         field: 'content',
         placeholder: 'Note',
@@ -39,7 +40,7 @@ export const setFormData = (type, data) => {
       )
       break
     case 'quote':
-      url = 'http://localhost:3000/quotes'
+      url = `${Environment.BASE_URL}/quotes`
       formFields.push({
         field: 'content',
         placeholder: 'Quote',
@@ -64,7 +65,7 @@ export const setFormData = (type, data) => {
       url = 'httml://localhost:3000/clubs/topic'
       break
     case 'club-start':
-      url = 'http://localhost:3000/clubs'
+      url = `${Environment.BASE_URL}/clubs`
       formFields.push({
         field: 'name',
         placeholder: 'Group Name',
@@ -98,7 +99,7 @@ export const setFormData = (type, data) => {
       miscData.bookId = data.book.id
       break
     case 'post':
-      url = 'http://localhost:3000/posts'
+      url = `${Environment.BASE_URL}/posts`
       formFields.push({
         field: 'content',
         placeholder: 'Add Comment...',
@@ -130,7 +131,7 @@ export const setUpdateFormData = (type, data) => {
 
   switch(type) {
     case 'list':
-      url = 'http://localhost:3000/lists/update'
+      url = `${Environment.BASE_URL}/lists/update`
       formFields.push({
         field: 'name',
         placeholder: '',
@@ -138,7 +139,7 @@ export const setUpdateFormData = (type, data) => {
       });
       break;
     case 'book':
-      url = 'http://localhost:3000/books/update'
+      url = `${Environment.BASE_URL}/books/update`
       formFields.push({
         field: 'description',
         placeholder: '',
@@ -146,7 +147,7 @@ export const setUpdateFormData = (type, data) => {
       })
       break
     case 'note':
-      url = 'http://localhost:3000/notes/update'
+      url = `${Environment.BASE_URL}/notes/update`
       formFields.push({
         field: 'content',
         placeholder: '',
@@ -154,7 +155,7 @@ export const setUpdateFormData = (type, data) => {
       });
       break;
     case 'quote':
-      url = 'http://localhost:3000/quotes/update'
+      url = `${Environment.BASE_URL}/quotes/update`
       formFields.push({
         field: 'content',
         placeholder: '',
@@ -163,11 +164,11 @@ export const setUpdateFormData = (type, data) => {
       {
         field: 'page',
         placeholder: '',
-        value: data.page
+        value: String(data.page)
       });
       break;
     case 'club':
-      url = 'http://localhost:3000/clubs/update'
+      url = `${Environment.BASE_URL}/clubs/update`
       formFields.push({
         field: 'name',
         placeholder: '',
@@ -184,7 +185,7 @@ export const setUpdateFormData = (type, data) => {
         value: data.topic
       })
     case 'user':
-      url = 'http://localhost:3000/users/update'
+      url = `${Environment.BASE_URL}/users/update`
       formFields.push({
         field: 'username',
         placeholder: '',

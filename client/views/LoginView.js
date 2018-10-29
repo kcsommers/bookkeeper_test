@@ -9,7 +9,7 @@ import {
   AsyncStorage 
 } from 'react-native'
 import axios from 'axios'
-
+import Environment from '../environment'
 import {connect} from 'react-redux'
 import {setAuthUser} from '../actions/authUserActions'
 import {setLists} from '../actions/listsActions'
@@ -45,7 +45,7 @@ class LoginView extends React.Component {
   }
 
   async handleSubmit() {
-    const url = 'http://localhost:3000/auth/login'
+    const url = `${Environment.BASE_URL}/auth/login`
     const payload = {
       username: this.state.username,
       password: this.state.password

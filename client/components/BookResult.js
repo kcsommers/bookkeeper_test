@@ -8,6 +8,8 @@ import {
 } from 'react-native'
 import {withNavigation} from 'react-navigation'
 import axios from 'axios'
+import Environment from '../environment'
+
 import {Dropdown} from 'react-native-material-dropdown'
 import {connect} from 'react-redux'
 import {addBook} from '../actions/listsActions'
@@ -42,7 +44,7 @@ class BookResult extends React.Component {
       userId: this.props.authUser.id
     }
     const list = this.props.lists.find((listObj) => listObj.name === this.state.selectedList)
-    const url = 'http://localhost:3000/books'
+    const url = `${Environment.BASE_URL}/books`
     const results = await axios.post(url, {bookData, list})
     if(!results.data.err) {
       this.props.addBook(results.data.book, list.id)

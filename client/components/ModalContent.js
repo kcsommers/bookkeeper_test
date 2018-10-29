@@ -31,39 +31,46 @@ class ModalContent extends React.Component {
     this.state = {
       modalData: this.props.data,
       formData: null,
-      formType: ''
+      formType: '',
+      confirmType: ''
     }
     this.triggerForm = this.triggerForm.bind(this)
     this.triggerEditForm = this.triggerEditForm.bind(this)
   }
 
   updateStore(newData) {
-    let bookId, listId
+    let bookId, listId, successMessage
     switch(this.state.formType) {
       case 'list':
         this.props.addList(newData.list)
+        successMessage = 'List Created'
         break
       case 'note':
         bookId = this.state.modalData.book.id
         listId = this.state.modalData.book.listsBooks.listId
         this.props.addNote(newData.note, bookId, listId)
+        successMessage = 'Note Added'
         break
       case 'quote': 
         bookId = this.state.modalData.book.id
         listId = this.state.modalData.book.listsBooks.listId
         this.props.addQuote(newData.quote, bookId, listId)
+        successMessage = 'Quote Added'
         break
       case 'club-start':
         this.props.addClub(newData.club)
         this.props.navigation.navigate('Club', {clubId: newData.club.id})
+        successMessage = 'Club Created'
         break
     }
     this.props.toggleModal()
+    this.props.setMessage({success: successMessage, err: null})
   }
 
-  confirm(type) {
+  confirmDelete(type, item) {
     this.setState((prevState) => ({
-      modalData: {...prevState.modalData, type: `confirm-${type}`}
+      modalData: {...prevState.modalData, type: `confirm-delete`, item},
+      confirmType: type
     }))
   }
 
@@ -96,13 +103,30 @@ class ModalContent extends React.Component {
 
   render() {
     const modalData = this.state.modalData
+    console.log(modalData)
     let display = ''
     switch(modalData.type) {
       case 'notes':
-        display = <ModalNotes book={modalData.book} />
+        display = <ModalNotes 
+                    book={modalData.book}
+                    triggerAddForm={(type) => {this.triggerForm(type)}}
+                    triggerEditForm={(type, item) => {
+                      this.triggerEditForm(type, item)
+                    }}
+                    onDelete={(type, item) => {
+                      this.confirmDelete(type, item)
+                    }} />
         break
       case 'quotes':
-        display = <ModalQuotes book={modalData.book} />
+        display = <ModalQuotes 
+                    book={modalData.book}
+                    triggerAddForm={(type) => {this.triggerForm(type)}}
+                    triggerEditForm={(type, item) => {
+                      this.triggerEditForm(type, item)
+                    }}
+                    onDelete={(type, item) => {
+                      this.confirmDelete(type, item)
+                    }} />
         break
       case 'book-options':
         display = <ModalBookOptions 
@@ -112,7 +136,9 @@ class ModalContent extends React.Component {
                       this.triggerEditForm(type, item)
                     }}
                     toggleModal={() => {this.props.toggleModal()}}
-                    onDelete={() => {this.confirm('delete-book')}} />
+                    onDelete={() => {
+                      this.confirmDelete('book', modalData.book)
+                    }} />
         break
       case 'list-options':
         display = <ModalListOptions 
@@ -121,7 +147,9 @@ class ModalContent extends React.Component {
                       this.triggerEditForm(type, item)
                     }}
                     toggleModal={() => {this.props.toggleModal()}}
-                    onDelete={() => {this.confirm('delete-list')}}
+                    onDelete={() => {
+                      this.confirmDelete('list', modalData.list)
+                    }}
         />
         break
       case 'club-options':
@@ -131,7 +159,9 @@ class ModalContent extends React.Component {
                       this.triggerEditForm(type, item)
                     }}
                     toggleModal={() => {this.props.toggleModal()}}
-                    onDelete={() => {this.confirm('delete-club')}}
+                    onDelete={() => {
+                      this.confirmDelete('club', modalData.club)
+                    }}
         />
         break
       case 'form':
@@ -145,27 +175,15 @@ class ModalContent extends React.Component {
                     toggleModal={() => {this.props.toggleModal()}} 
                     data={modalData} />
         break
-      case 'confirm-delete-book':
+      case 'confirm-delete':
         display = <ModalConfirm 
-                    type="delete-book" 
-                    data={modalData}
-                    toggleModal={() => {this.props.toggleModal()}} />
-        break
-      case 'confirm-delete-list':
-        display = <ModalConfirm 
-                    type="delete-list" 
-                    data={modalData}
-                    toggleModal={() => {this.props.toggleModal()}} />
-        break
-      case 'confirm-delete-club':
-        display = <ModalConfirm 
-                    type="delete-club" 
+                    type={`delete-${this.state.confirmType}`} 
                     data={modalData}
                     toggleModal={() => {this.props.toggleModal()}} />
         break
     }
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, modalData.modalStyle]}>
         {display}
       </View>
     )

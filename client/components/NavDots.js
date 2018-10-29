@@ -16,6 +16,10 @@ export default class NavDots extends React.Component{
     return (
       <View style={{
         flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingTop: 15,
+        paddingBottom: 15
       }}>
         {dots}
       </View>

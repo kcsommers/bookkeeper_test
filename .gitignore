@@ -3,3 +3,4 @@ server/node_modules
 server/.env
 client/.expo
 client/npm-debug.
+client/environment.js

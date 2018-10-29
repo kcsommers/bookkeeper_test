@@ -4,21 +4,19 @@ import {
   View,
   ScrollView,
   Image,
-  Text,
-  TouchableOpacity
+  Text
 } from 'react-native'
 
 import {connect} from 'react-redux'
 import {addQuote, addNote, deleteBook} from '../actions/listsActions'
-import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import Modal from 'react-native-modal'
 import ModalContent from '../components/ModalContent'
 import Banner from '../components/Banner'
-import Button1 from '../components/Button1'
 import IconBtn from '../components/IconBtn'
 import Quote from '../components/Quote'
 import Note from '../components/Note'
+import Message from '../components/Message'
 
 import missingBookCover from '../assets/images/missingBookCover.jpg'
 import bg7 from '../assets/images/page_backgrounds/bg7.jpg'
@@ -28,18 +26,32 @@ class BookView extends React.Component {
     super(props)
     this.state = {
       showModal: false,
-      modalData: null
+      modalData: null,
+      message: null,
+      showMessage: false
     }
     this.toggleModal = this.toggleModal.bind(this)
     this.getBookFromStore = this.getBookFromStore.bind(this)
+    this.setMessage = this.setMessage.bind(this)
   }
 
   toggleModal() {
     this.setState({showModal: !this.state.showModal, modalData: null})
   }
 
+  setMessage(message) {
+    this.setState({message, showMessage: !this.state.showMessage})
+  }
+
   handleModalTrigger(modalData) {
     this.setState({modalData, showModal: true})
+  }
+
+  triggerEditForm(type, item) {
+    this.setState((prevState) => ({
+      showModal: true,
+      modalData: {...prevState.modalData, type: 'edit', item, book: null}
+    }))
   }
 
   getBookFromStore(bookId, listId) {
@@ -50,6 +62,7 @@ class BookView extends React.Component {
   }
 
   render() {
+    const modalData = this.state.modalData
     let listId = this.props.navigation.getParam('listId')
     let book = this.getBookFromStore(this.props.navigation.getParam('bookId'), listId)
     let title = (book) ? book.title : ''
@@ -58,73 +71,94 @@ class BookView extends React.Component {
     let imgSrc = (book && book.imgUrl) ? {uri: book.imgUrl} : missingBookCover
 
     let quotes = (book && book.quotes.length) ? 
-    book.quotes.map((quote, i) => <Quote quote={quote} key={i} />) 
+    book.quotes.map((quote, i) => (
+      <View key={i} style={{marginBottom: 15, alignSelf: 'stretch'}}>
+        <Quote quote={quote} key={i} type="page" />
+      </View>
+    ))
     : 
     <Text>No quotes just yet</Text>
 
     let notes = (book && book.notes.length) ? 
-    book.notes.map((note, i) => <Note note={note} key={i} />)
+    book.notes.map((note, i) => (
+      <View key={i} style={{marginBottom: 15, alignSelf: 'stretch'}}>
+        <Note 
+          note={note} 
+          key={i} 
+          onPress={() => {this.triggerEditForm('note', note)}}
+          type="page" />
+      </View>
+    ))
     : 
     <Text>No notes just yet</Text>
 
+    const message = (this.state.showMessage) ? 
+      <Message 
+        message={this.state.message}
+        clearMessage={() => {this.setMessage(null)}} /> : ''
+
     return (
-      <ScrollView contentContainerStyle={styles.container}>
-        <Banner image={bg7} />
-        
-        <View style={styles.wrapper}>
+      <View>
+        <ScrollView contentContainerStyle={styles.container}>
+          <Banner image={bg7} />
+          
+          <View style={styles.wrapper}>
 
-          <View style={styles.bookOptionsWrapper}>
-            <IconBtn 
-              name="options"
-              backgroundColor='#fff'
-              iconColor="#444"
-              iconSize={20}
-              circleSize={{width: 40, height: 40, borderRadius: 20, marginTop: 10, marginBottom: 10}}
-              onPress={() => {
-                this.handleModalTrigger({type: 'book-options', book, listId})
-              }}
-            />
+            <View style={styles.bookOptionsWrapper}>
+              <IconBtn 
+                name="options"
+                backgroundColor='#fff'
+                iconColor="#444"
+                iconSize={20}
+                circleSize={{width: 40, height: 40, borderRadius: 20, marginTop: 10, marginBottom: 10}}
+                onPress={() => {
+                  this.handleModalTrigger({type: 'book-options', book, listId})
+                }}
+              />
 
-            <IconBtn 
-              name="backburger"
-              backgroundColor='rgba(0,0,0,0)'
-              iconColor="#1b9ce2" 
-              iconSize={25}
-              circleSize={{width: 40, height: 40, borderRadius: 20, borderWidth: 2, borderColor: '#1b9ce2'}}
-              onPress={() => {
-                this.props.navigation.navigate('List', {listId})
-              }}
-            />
+              <IconBtn 
+                name="backburger"
+                backgroundColor='rgba(0,0,0,0)'
+                iconColor="#1b9ce2" 
+                iconSize={25}
+                circleSize={{width: 40, height: 40, borderRadius: 20, borderWidth: 2, borderColor: '#1b9ce2'}}
+                onPress={() => {
+                  this.props.navigation.navigate('List', {listId})
+                }}
+              />
+            </View>
+
+            <View style={styles.bookDetails}>
+              <Image source={imgSrc} style={styles.bookImg} />
+              <Text style={[styles.title, styles.text]}>{title}</Text>
+              <Text style={styles.authors}>{authors}</Text>
+              <Text style={[styles.description, styles.text]}>{description}</Text>
+            </View>
+
+            <View style={styles.noteWrapper}>
+              <Text style={styles.noteHeader}>Quotes</Text>
+              {quotes}
+            </View>
+
+            <View style={styles.noteWrapper}>
+              <Text style={styles.noteHeader}>Notes</Text>
+              {notes}
+            </View>
           </View>
 
-          <View style={styles.bookDetails}>
-            <Image source={imgSrc} style={styles.bookImg} />
-            <Text style={[styles.title, styles.text]}>{title}</Text>
-            <Text style={styles.authors}>{authors}</Text>
-            <Text style={[styles.description, styles.text]}>{description}</Text>
-          </View>
+          <Modal
+            isVisible={this.state.showModal}
+            onBackdropPress={this.toggleModal}>
 
-          <View style={styles.noteWrapper}>
-            <Text style={styles.noteHeader}>Quotes</Text>
-            {quotes}
-          </View>
-
-          <View style={styles.noteWrapper}>
-            <Text style={styles.noteHeader}>Notes</Text>
-            {notes}
-          </View>
-        </View>
-
-        <Modal
-          isVisible={this.state.showModal}
-          onBackdropPress={this.toggleModal}>
-
-          <ModalContent 
-            data={this.state.modalData}
-            toggleModal={() => {this.toggleModal()}}
-          />
-        </Modal>
-      </ScrollView>
+            <ModalContent 
+              data={modalData}
+              toggleModal={() => {this.toggleModal()}}
+              setMessage={(message) => {this.setMessage(message)}}
+              />
+          </Modal>
+        </ScrollView>
+        {message}
+      </View>
     )
   }
 }
