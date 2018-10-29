@@ -89,7 +89,7 @@ class ProfileView extends React.Component {
         modalTrigger={(data) => this.handleModalTrigger(data)} />
     ))
     :
-    <Text>You are not currently reading anything!</Text>
+    <Text style={{paddingLeft: 15, paddingRight: 15}}>You are not currently reading anything!</Text>
     const dotCount = currentsDisplay.length ? currentsDisplay.length : 0
 
     const message = (this.state.showMessage) ? 

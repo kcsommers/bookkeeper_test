@@ -39,7 +39,6 @@ class BookResult extends React.Component {
       description: book.searchInfo.textSnippet,
       imgUrl: (book.volumeInfo.imageLinks) 
               ? book.volumeInfo.imageLinks.smallThumbnail : '',
-      banner: '',
       current: false,
       userId: this.props.authUser.id
     }
