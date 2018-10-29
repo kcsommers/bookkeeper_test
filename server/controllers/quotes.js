@@ -16,7 +16,19 @@ router.post('/', (req, res) => {
     console.log('ERROR CREATING QUOTE IN DB', err)
     res.json({err})
   });
-})
+});
+
+router.delete('/:id', (req, res) => {
+  console.log('HIT DELETE QUOTE ROUTE')
+  db.quote.destroy({
+    where: {id: req.params.id}
+  }).then((result) => {
+    res.json({result})
+  }).catch((err) => {
+    console.log('ERROR DELETING QUOTE FROM DB', err)
+    res.json({err})
+  });
+});
 
 
 module.exports = {router}

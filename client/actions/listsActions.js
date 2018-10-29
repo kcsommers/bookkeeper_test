@@ -7,6 +7,9 @@ export const UPDATE_BOOK = 'lists:updateBook'
 export const DELETE_BOOK = 'lists:deleteBook'
 export const ADD_QUOTE = 'lists:addQuote'
 export const ADD_NOTE = 'lists:addNote'
+export const DELETE_NOTE = 'lists:deleteNote'
+export const DELETE_QUOTE = 'lists:deleteQuote'
+
 
 export const setLists = (lists) => ({
   type: SET_LISTS,
@@ -51,4 +54,14 @@ export const addQuote = (quote, bookId, listId) => ({
 export const addNote = (note, bookId, listId) => ({
   type: ADD_NOTE,
   payload: {note, bookId, listId}
+})
+
+export const deleteNote = (noteId, bookId, listId) => ({
+  type: DELETE_NOTE,
+  payload: {noteId, bookId, listId}
+})
+
+export const deleteQuote = (quoteId, bookId, listId) => ({
+  type: DELETE_QUOTE,
+  payload: {quoteId, bookId, listId}
 })

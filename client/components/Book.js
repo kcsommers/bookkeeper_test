@@ -4,7 +4,8 @@ import {
   View,
   Text,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
+  Dimensions
 } from 'react-native'
 import {withNavigation} from 'react-navigation'
 import missingBookCover from '../assets/images/missingBookCover.jpg'
@@ -100,7 +101,10 @@ class Book extends React.Component {
 const styles = StyleSheet.create({
   bookContainer: {
     flexDirection: 'row',
-    flex: 1
+    flex: 1,
+    width: Dimensions.get('window').width,
+    paddingLeft: 15,
+    paddingRight: 15,
   },
   bookLeft: {
     flex: 1

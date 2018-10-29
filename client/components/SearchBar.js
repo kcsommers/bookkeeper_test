@@ -6,6 +6,7 @@ import {
   TouchableOpacity
 } from 'react-native'
 import {connect} from 'react-redux'
+import Environment from '../environment'
 import {setSearchResults} from '../actions/searchResultsActions'
 import {withNavigation} from 'react-navigation'
 
@@ -24,7 +25,7 @@ class SearchBar extends React.Component {
 
   async handleSubmit(endPoint) {
     let url = (endPoint === 'books' || endPoint === 'clubs') ?
-    'http://localhost:3000/' : 'https://www.googleapis.com/'
+    `${Environment.BASE_URL}/` : 'https://www.googleapis.com/'
     url = `${url}${endPoint}?q=${this.state.searchTerm}`
     console.log(url)
     try {

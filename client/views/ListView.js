@@ -4,9 +4,7 @@ import {
   View,
   Text,
   ScrollView,
-  TouchableOpacity
 } from 'react-native'
-import {handleDelete} from '../formFunctions'
 
 import {connect} from 'react-redux'
 import {
@@ -20,20 +18,28 @@ import Modal from 'react-native-modal'
 import ModalContent from '../components/ModalContent'
 import Book from '../components/Book'
 import IconBtn from '../components/IconBtn'
+import Message from '../components/Message'
 
 class ListView extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       showModal: false,
-      modalData: null
+      modalData: null,
+      message: null,
+      showMessage: false
     }
     this.toggleModal = this.toggleModal.bind(this)
     this.handleModalTrigger = this.handleModalTrigger.bind(this)
+    this.setMessage = this.setMessage.bind(this)
   }
 
   toggleModal() {
     this.setState({showModal: !this.state.showModal, modalData: null})
+  }
+
+  setMessage(message) {
+    this.setState({message, showMessage: !this.state.showMessage})
   }
 
   handleModalTrigger(modalData) {
@@ -46,6 +52,7 @@ class ListView extends React.Component {
   }
 
   render() {
+    const modalData = this.state.modalData
     const listId = this.props.navigation.getParam('listId')
     const list = this.getListFromStore(listId)
     if(list) {
@@ -57,37 +64,48 @@ class ListView extends React.Component {
             key={i} />
         </View>)
       )
+
+      const message = (this.state.showMessage) ? 
+      <Message 
+        message={this.state.message}
+        clearMessage={() => {this.setMessage(null)}} /> : ''
+
       return (
-        <ScrollView contentContainerStyle={styles.container}>
-          <View style={styles.listHeader}>
-            <View style={styles.listOptionsWrapper}>
-              <IconBtn 
-                name="options"
-                backgroundColor='#fff'
-                iconColor="#444"
-                iconSize={20}
-                circleSize={{width: 40, height: 40, borderRadius: 20}}
-                onPress={() => {
-                  this.handleModalTrigger({type: 'list-options', list})
-                }}
-              />
+        <View>
+          <ScrollView contentContainerStyle={styles.container}>
+            <View style={styles.listHeader}>
+              <View style={styles.listOptionsWrapper}>
+                <IconBtn 
+                  name="options"
+                  backgroundColor='#fff'
+                  iconColor="#444"
+                  iconSize={20}
+                  circleSize={{width: 40, height: 40, borderRadius: 20}}
+                  onPress={() => {
+                    this.handleModalTrigger({type: 'list-options', list})
+                  }}
+                />
+              </View>
+
+              <Text style={styles.listName} >{list.name}</Text>
             </View>
 
-            <Text style={styles.listName} >{list.name}</Text>
-          </View>
+            {books}
+            
+            <Modal
+              isVisible={this.state.showModal}
+              onBackdropPress={this.toggleModal}>
 
-          {books}
-          
-          <Modal
-            isVisible={this.state.showModal}
-            onBackdropPress={this.toggleModal}>
+              <ModalContent 
+                data={modalData}
+                toggleModal={() => {this.toggleModal()}}
+                setMessage={(message) => {this.setMessage(message)}}
+              />
+            </Modal>
+          </ScrollView>
 
-            <ModalContent 
-              data={this.state.modalData}
-              toggleModal={() => {this.toggleModal()}}
-            />
-          </Modal>
-        </ScrollView>
+          {message}
+        </View>
       )
     }
     else {
@@ -98,7 +116,8 @@ class ListView extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 15
+    paddingTop: 15,
+    paddingBottom: 15
   },  
   listHeader: {
     justifyContent: 'center',
@@ -108,7 +127,9 @@ const styles = StyleSheet.create({
   listOptionsWrapper: {
     position: 'absolute',
     left: 0,
-    zIndex: 100
+    zIndex: 100,
+    paddingLeft: 15,
+    paddingRight: 15
   },
   listName: {
     fontFamily: 'Merriweather',

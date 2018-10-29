@@ -7,6 +7,7 @@ import {
 } from 'react-native'
 import {withNavigation} from 'react-navigation'
 import axios from 'axios'
+import Environment from '../environment'
 import {connect} from 'react-redux'
 import {updateBook} from '../actions/listsActions'
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -21,7 +22,7 @@ class ModalBookOptions extends React.Component {
 
   async toggleCurrentRead(book) {
     const isCurrent = !book.current
-    const url = 'http://localhost:3000/books/update'
+    const url = `${Environment.BASE_URL}/books/update`
     const data = {newData: {current: isCurrent}, id: book.id}
     const updatedBook = await axios.post(url, data)
     this.props.updateBook(data, book.listsBooks.listId)

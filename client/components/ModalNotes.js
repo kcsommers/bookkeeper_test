@@ -10,38 +10,34 @@ import IconBtn from './IconBtn'
 
 const ModalNotes = (props) => {
   const notes = (props.book.notes.length) ?
-  props.book.notes.map((note, i) => {
-    console.log(note, i)
-    return <Note note={note} key={i} />
-  })
+  props.book.notes.map((note, i) => (
+    <View style={{marginBottom: 30}} key={i}>
+      <Note 
+        note={note} 
+        onPress={() => {props.triggerEditForm('note', note)}}
+        key={i} 
+        type="modal"
+        onDelete={() => {props.onDelete('note', note)}} />
+    </View>
+  ))
   :
   <Text>No Notes Just Yet</Text>
+
   return (
     <View style={styles.container}>
-      <View style={styles.addBtn}>
+      <Text style={styles.bookTitle}>{props.book.title}</Text>
+      <View style={styles.headerWrapper}>
         <IconBtn 
           name="add" 
           backgroundColor="rgba(0,0,0,0)"
           iconColor="#1c4b44"
           iconSize={25}
-          circleSize={{width: 40, height: 40, borderRadius: 20, borderWidth: 2, borderColor: '#1c4b44'}}
+          circleSize={{width: 60, height: 60, borderRadius: 30, borderWidth: 2, borderColor: '#1c4b44'}}
           onPress={() => {
-            this.props.modalTrigger({
-              type: 'quotes', 
-              book, 
-              modalStyle: {
-                flex: 1
-              },
-              modalAnimations: {
-                in: 'zoomIn',
-                out: 'zoomOut'
-              },
-              listId: book.listsBooks.listId
-            })
+            props.triggerAddForm('note')
           }} />
+        <Text style={styles.header}>Notes</Text>
       </View>
-      <Text style={styles.header}>Notes</Text>
-      <Text style={styles.bookTitle}>{props.book.title}</Text>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {notes}
       </ScrollView>
@@ -51,23 +47,26 @@ const ModalNotes = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-
+    flex: 1
   },
-  addBtn: {
-    position: 'absolute'  
+  headerWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: 20,
+    paddingBottom: 20
   },
   scrollContainer: {
-
+    flex: 1
   },
   bookTitle: {
     fontFamily: 'Merriweather',
-    fontSize: 16
+    fontSize: 16,
+    textAlign: 'center'
   },
   header: {
     fontFamily: 'Merriweather',
     fontSize: 20,
-    textAlign: 'center',
-    flex: 1
+    marginLeft: 15
   }
 })
 

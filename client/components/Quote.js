@@ -1,24 +1,49 @@
 import React from 'react'
 import {
   StyleSheet,
+  TouchableOpacity,
   View,
-  Text,
-  TouchableOpacity
+  Text
 } from 'react-native'
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 
 const Quote = (props) => {
+  const styles = (props.type === 'modal') ? modalStyles : pageStyles
   return (
-    <TouchableOpacity style={styles.wrapper}>
-      <View style={styles.dateWrapper}>
-        <Text style={styles.date}>added a month ago</Text>
+    <TouchableOpacity style={styles.wrapper} onPress={props.onPress}>
+      <View style={mainStyles.dateWrapper}>
+        <Text style={mainStyles.date}>added a month ago</Text>
+        <TouchableOpacity onPress={props.onDelete}>
+          <MaterialIcon name="remove-circle-outline" size={20} color="#444" />
+        </TouchableOpacity>
       </View>
-      <Text style={styles.text}>{props.quote.content}</Text>
-      <Text style={styles.page}>Page: {props.quote.page}</Text>
+      <Text style={mainStyles.text}>{props.quote.content}</Text>
+      <Text style={mainStyles.text}>{props.quote.page}</Text>
     </TouchableOpacity>
   )
 }
 
-const styles = StyleSheet.create({
+const mainStyles = StyleSheet.create({
+  dateWrapper: {
+    borderTopWidth: 1,
+    borderTopColor: '#444',
+    paddingTop: 5,
+    paddingBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  text: {
+    color: '#444',
+    fontFamily: 'Merriweather',
+    fontSize: 16,
+  },
+  page: {
+    fontFamily: 'Merriweather',
+    marginTop: 10
+  }
+})
+
+const pageStyles = StyleSheet.create({
   wrapper: {
     padding: 15,
     backgroundColor: '#fff',
@@ -28,21 +53,13 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     borderRadius: 5,
     alignSelf: 'stretch'
-  },
-  dateWrapper: {
-    borderTopWidth: 1,
-    borderTopColor: '#444',
-    paddingTop: 5,
-    paddingBottom: 10
-  },
-  text: {
-    color: '#444',
-    fontFamily: 'MerrItalic',
-    fontSize: 16,
-  },
-  page: {
-    fontFamily: 'Merriweather',
-    marginTop: 10
+  }
+})
+
+const modalStyles = StyleSheet.create({
+  wrapper: {
+    backgroundColor: '#fff',
+    alignSelf: 'stretch'
   }
 })
 

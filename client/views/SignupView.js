@@ -9,7 +9,7 @@ import {
   TouchableOpacity 
 } from 'react-native'
 import axios from 'axios'
-
+import Environment from '../environment'
 import {connect} from 'react-redux'
 import {setAuthUser} from '../actions/authUserActions'
 import {orientationChange} from '../actions/orientationActions'
@@ -49,7 +49,7 @@ class SignupView extends React.Component {
   }
 
   async handleSubmit() {
-    const url = 'http://localhost:3000/auth/signup'
+    const url = `${Environment.BASE_URL}/auth/signup`
     const payload = {
       username: this.state.username,
       email: this.state.email,

@@ -15,7 +15,19 @@ router.post('/', (req, res) => {
     console.log('ERROR CREATING nOTE IN DB', err)
     res.json({err})
   });
-})
+});
+
+router.delete('/:id', (req, res) => {
+  console.log('HIT DELETE NOTE ROUTE')
+  db.note.destroy({
+    where: {id: req.params.id}
+  }).then((result) => {
+    res.json({result})
+  }).catch((err) => {
+    console.log('ERROR DELETING NOTE FROM DB', err)
+    res.json({err})
+  });
+});
 
 
 module.exports = {router}

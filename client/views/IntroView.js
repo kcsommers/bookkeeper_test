@@ -5,7 +5,7 @@ import {
   Text,
   AsyncStorage
 } from 'react-native'
-
+import Environment from '../environment'
 import axios from 'axios'
 import {connect} from 'react-redux'
 import {setAuthUser} from '../actions/authUserActions'
@@ -20,7 +20,7 @@ class IntroView extends React.Component {
 
   async verifyToken(token) {
     console.log('VERIFYING TOKEN')
-    const url = 'http://localhost:3000/auth/verify'
+    const url = `${Environment.BASE_URL}/auth/verify`
     const verified = await axios.get(url, {
       headers: {
         Authorization: 'Bearer ' + token
