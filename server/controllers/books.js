@@ -2,6 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const db = require('../models');
+const cloudinary = require('cloudinary');
+const multer = require('multer');
+const upload = multer({dest: 'uploads/'})
 
 router.post('/', (req, res) => {
   console.log('HIT CREATE BOOK ROUTE')
@@ -13,7 +16,7 @@ router.post('/', (req, res) => {
     description: bookData.description,
     imgUrl: bookData.imgUrl,
     current: bookData.current,
-    banner: bookData.banner
+    banner: 'https://res.cloudinary.com/kcsommers/image/upload/v1530509212/lflbvvr8kjmgae9suzov.jpg'
   }).then((book) => {
     db.list.findById(listData.id).then((list) => {
       list.addBook(book).then((lB) => {
@@ -61,18 +64,27 @@ router.get('/', (req, res) => {
   });
 });
 
-router.post('/update', (req, res) => {
+router.post('/update', upload.single('data'), (req, res) => {
   console.log('HIT UPDAT BOOK ROUTE')
-  db.book.update(req.body.newData, {
-    where: {
-      id: req.body.id
-    }
-  }).then((book) => {
-    res.json({book})
-  }).catch((err) => {
-    console.log("ERROR UPDATING BOOK", err)
-    res.json({err})
-  });
+
+  // let newData = req.body.newData
+  if(req.file) {
+    cloudinary.uploader.upload(req.file.path, (result) => {
+      // newData.banner = result.public_id
+      console.log(result.url)
+    });
+  }
+  // console.log(newData)
+  // db.book.update(newData, {
+  //   where: {
+  //     id: req.body.id
+  //   }
+  // }).then((book) => {
+  //   res.json({book})
+  // }).catch((err) => {
+  //   console.log("ERROR UPDATING BOOK", err)
+  //   res.json({err})
+  // });
 });
 
 router.delete('/:id', (req, res) => {

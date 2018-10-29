@@ -100,7 +100,7 @@ class BookView extends React.Component {
     return (
       <View>
         <ScrollView contentContainerStyle={styles.container}>
-          <Banner image={bg7} />
+          <Banner image={book.banner} />
           
           <View style={styles.wrapper}>
 

@@ -10,7 +10,7 @@ const BookView = (props) => {
   return (
     <View>
       <Image 
-        source={props.image}
+        source={{uri: 'https://res.cloudinary.com/kcsommers/image/upload/v1530509212/lflbvvr8kjmgae9suzov.jpg'}}
         style={styles.image}
       />
     </View>
