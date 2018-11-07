@@ -81,7 +81,7 @@ class ProfileView extends React.Component {
     ))
     const currentReads = []
     this.props.lists.forEach((list) => {
-      list.books.forEach((book) => { if(book.current) {currentReads.push(book)} })
+      list.books.forEach((book) => { if(book && book.current) {currentReads.push(book)} })
     })
 
     const currentsDisplay = (currentReads.length) ? 

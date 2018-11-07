@@ -51,10 +51,12 @@ const listsReducer = (state = [], {type, payload}) => {
         ...state.slice(listIndex + 1)
       ]
     case UPDATE_BOOK:
+      console.log("UPDATE BOOK")
+      console.log(payload.listId, payload.bookData)
       listIndex = state.findIndex((listObj) => listObj.id === payload.listId)
-      bookIndex = state[listIndex].books.findIndex((bookObj) => bookObj.id === payload.bookData.id)
+      bookIndex = state[listIndex].books.findIndex((bookObj) => bookObj.id === payload.bookData.miscData.bookId)
 
-      bookUpdated = state[listIndex].books.find((bookObj) => bookObj.id === payload.bookData.id)
+      bookUpdated = state[listIndex].books.find((bookObj) => bookObj.id === payload.bookData.miscData.bookId)
 
       for(key in bookUpdated) {
         for(field in payload.bookData.newData) {

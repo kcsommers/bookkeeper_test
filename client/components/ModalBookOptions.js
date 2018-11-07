@@ -21,12 +21,26 @@ class ModalBookOptions extends React.Component {
   }
 
   async toggleCurrentRead(book) {
-    const isCurrent = !book.current
-    const url = `${Environment.BASE_URL}/books/update`
-    const data = {newData: {current: isCurrent}, id: book.id}
-    const updatedBook = await axios.post(url, data)
-    this.props.updateBook(data, book.listsBooks.listId)
-    this.props.toggleModal()
+    let url = `${Environment.BASE_URL}/books/update`
+    let listId = book.listsBooks.listId
+    let isCurrent = !book.current;
+    let miscData = {bookId: book.id}
+    let newData = {current: isCurrent}
+    let postData = new FormData()
+    postData.append('inputData', JSON.stringify(newData))
+    postData.append('miscData', JSON.stringify(miscData))
+
+    try {
+      const results = await axios.post(url, postData)
+      this.props.updateBook({newData, miscData}, listId)
+      this.props.toggleModal();  
+    }
+    catch(err) {
+      console.log('ERROR POSTING BOOK UPDATE', err)
+    }
+
+    
+    
   } 
 
   render() {

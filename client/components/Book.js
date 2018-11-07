@@ -15,12 +15,13 @@ class Book extends React.Component {
 
   render() {
     const book = this.props.book
-    const imgSrc = (book.imgUrl) ? {uri: book.imgUrl} : missingBookCover
+    const imgSrc = (book && book.imgUrl) ? {uri: book.imgUrl} : missingBookCover
     return (
       <View style={styles.bookContainer}>
         <View style={styles.bookLeft}>
           <TouchableOpacity onPress={() => {
-            this.props.navigation.navigate('Book', {bookId: book.id, listId: book.listsBooks.listId})
+            let bookParam = (book) ? {bookId: book.id, listId: book.listsBooks.listId} : null
+            this.props.navigation.navigate('Book', bookParam)
           }}>
             <Image source={imgSrc} style={styles.image} resizeMode="cover" />
           </TouchableOpacity>

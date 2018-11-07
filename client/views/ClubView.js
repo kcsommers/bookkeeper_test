@@ -13,7 +13,6 @@ import {addPost} from '../actions/clubsActions'
 
 import Modal from 'react-native-modal'
 import ModalContent from '../components/ModalContent'
-import bg1 from '../assets/images/page_backgrounds/bg1.jpg'
 import Banner from '../components/Banner'
 import AddForm from '../components/AddForm'
 import Post from '../components/Post'
@@ -81,7 +80,7 @@ class ClubView extends React.Component {
       const formData = setFormData('post', {clubId: club.id, user: this.props.user})
       return (
         <ScrollView contentContainerStyle={styles.container}>
-          <Banner image={bg1} />
+          <Banner image={club.imgUrl} />
 
           <View style={styles.wrapper}>
             <View style={styles.clubDetails}>

@@ -7,6 +7,7 @@ import {
 } from 'react-native'
 
 const Banner = (props) => {
+  console.log('BANNER')
   return (
     <View>
       <Image 

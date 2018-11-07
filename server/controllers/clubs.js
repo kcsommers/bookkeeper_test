@@ -16,7 +16,7 @@ router.post('/', (req, res) => {
     description: inputData.description,
     admin: modelData.admin,
     topic: inputData.topic,
-    imgUrl: 'IMGGGGG STRING',
+    imgUrl: 'https://res.cloudinary.com/kcsommers/image/upload/v1530509212/lflbvvr8kjmgae9suzov.jpg',
     bookImg: modelData.bookImg
   }).then((club) => {
     db.user.findById(miscData.userId).then((user) => {

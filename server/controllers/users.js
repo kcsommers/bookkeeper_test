@@ -10,7 +10,7 @@ router.post('/update', uploader.fields([{name: 'image'}, {name: 'banner'}]), (re
   console.log("HIT UPDATE USER ROUTE")
   let miscData = JSON.parse(req.body.miscData)
   let newData = JSON.parse(req.body.inputData)
-  if(req.files) {
+  if(Object.keys(req.files).length) {
     uploadToCloudinary(req.files).then((imgUrls) => {
       newData = Object.assign(newData, imgUrls)
       db.user.update(newData, {

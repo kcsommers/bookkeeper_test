@@ -36,6 +36,7 @@ class ModalEdit extends React.Component {
         break
       case 'list':
         this.props.updateList(data)
+        break
 
     }
 

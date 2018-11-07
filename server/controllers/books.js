@@ -66,11 +66,12 @@ router.get('/', (req, res) => {
 
 router.post('/update', uploader.fields([{name: 'image'}, {name: 'banner'}]), (req, res) => {
   console.log('HIT UPDAT BOOK ROUTE')
+  console.log(req.body)
 
   let miscData = JSON.parse(req.body.miscData)
   let newData = JSON.parse(req.body.inputData)
 
-  if(req.files) {
+  if(Object.keys(req.files).length) {
     uploadToCloudinary(req.files).then((imgUrls) => {
       newData = Object.assign(newData, imgUrls);
       db.book.update(newData, {
@@ -86,8 +87,15 @@ router.post('/update', uploader.fields([{name: 'image'}, {name: 'banner'}]), (re
       res.json({err});
     });
   }
-  else{
-    console.log("NO IMAGES", req.body)
+  else {
+    db.book.update(newData, {
+      where: {id: miscData.bookId}
+    }).then((bookResult) => {
+      res.json({success: bookResult});
+    }).catch((err) => {
+      console.log('ERROR UPDATING BOOK', err);
+      res.json({err});
+    })
   }
 });
 
