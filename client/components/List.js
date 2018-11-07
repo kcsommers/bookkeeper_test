@@ -33,7 +33,7 @@ class List extends React.Component {
 
       list.books.forEach((book, i) => {
         if(i < 4) {
-          let imgSrc = (book.imgUrl) ? {uri: book.imgUrl} : missingBookCover
+          let imgSrc = (book && book.imgUrl) ? {uri: book.imgUrl} : missingBookCover
           let bookImg = <Image 
                           source={imgSrc}
                           key={i} 

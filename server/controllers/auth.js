@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const router = express.Router();
-const bp = require('body-parser');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const db = require('../models');
@@ -15,6 +14,9 @@ const createUser = (userData, hash) => {
     defaults: {
       username: userData.username,
       email: userData.email,
+      image: 'https://res.cloudinary.com/kcsommers/image/upload/v1530162883/vzbo0kvghbp568aswfit.jpg',
+      banner: 'https://res.cloudinary.com/kcsommers/image/upload/v1530244104/group-background2.jpg',
+      location: 'Earth, Milky Way',
       password: hash
     },
     where: {
@@ -173,6 +175,5 @@ router.post('/signup', hashPassword, (req, res) => {
     res.json({error: res.locals.error})
   }
 });
-
 
 module.exports = {router}

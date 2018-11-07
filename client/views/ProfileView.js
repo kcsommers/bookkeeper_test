@@ -4,6 +4,7 @@ import {
   View, 
   ScrollView, 
   Text,
+  Image,
   TouchableOpacity
 } from 'react-native'
 import {connect} from 'react-redux'
@@ -13,6 +14,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import Modal from 'react-native-modal'
 import ModalContent from '../components/ModalContent'
 import SearchBar from '../components/SearchBar'
+import Banner from '../components/Banner'
 import List from '../components/List'
 import Book from '../components/Book'
 import Club from '../components/Club'
@@ -65,6 +67,7 @@ class ProfileView extends React.Component {
   }
 
   render() {
+    const user = this.props.navigation.getParam('user', this.props.user)
     const modalData = this.state.modalData
     const lists = this.props.lists.map((list, i) => (
       <View style={{marginBottom: 15}} key={i}>
@@ -78,7 +81,7 @@ class ProfileView extends React.Component {
     ))
     const currentReads = []
     this.props.lists.forEach((list) => {
-      list.books.forEach((book) => { if(book.current) {currentReads.push(book)} })
+      list.books.forEach((book) => { if(book && book.current) {currentReads.push(book)} })
     })
 
     const currentsDisplay = (currentReads.length) ? 
@@ -104,7 +107,21 @@ class ProfileView extends React.Component {
             type="full"
             endPoint="books/v1/volumes" />
 
+          <Banner image={user.banner} />
+
+          <View style={{alignItems: 'center', marginTop: -100}}>
+            <Image 
+              source={{uri: user.image}} 
+              style={styles.profileImg}
+              resizeMode="cover" />
+          </View>
+
           <View style={styles.profileWrapper}>
+            <View style={styles.userInfoWrapper}>
+              <Text style={styles.username}>{user.username}</Text>
+              <Text style={styles.location}>{user.location}</Text>
+            </View>
+
             <View style={styles.currentReadsContainer}>
               <Text style={[styles.header, {padding: 15}]}>Current Reads</Text>
               <ScrollView 
@@ -165,7 +182,25 @@ class ProfileView extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  profileWrapper: {
+  profileImg: {
+    width: 150,
+    height: 150,
+    borderRadius: 5,
+    borderWidth: 2,
+    borderColor: '#fff'
+  },
+  userInfoWrapper: {
+    padding: 15,
+    alignItems: 'center'
+  },  
+  username: {
+    fontFamily: 'Merriweather',
+    fontSize: 24,
+    marginBottom: 10
+  },
+  location: {
+    fontFamily: 'Merriweather',
+    fontSize: 18,
   },
   header: {
     fontFamily: 'Merriweather',

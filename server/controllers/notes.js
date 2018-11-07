@@ -2,13 +2,17 @@ require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const db = require('../models');
+const multer = require('multer')().single();
+router.use(multer);
 
 router.post('/', (req, res) => {
   console.log("HIT CREATE nOTE ROUTE")
+  const inputData = JSON.parse(req.body.inputData);
+  const modelData = JSON.parse(req.body.modelData);
   db.note.create({
-    content: req.body.content,
-    userId: req.body.userId,
-    bookId: req.body.bookId
+    content: inputData.content,
+    userId: modelData.userId,
+    bookId: modelData.bookId
   }).then((note) => {
     res.json({note})
   }).catch((err) => {

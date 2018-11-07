@@ -56,7 +56,9 @@ class BookView extends React.Component {
 
   getBookFromStore(bookId, listId) {
     const listIndex = this.props.lists.findIndex((list) => list.id === listId)
-    const bookIndex = this.props.lists[listIndex].books.findIndex((book) => book.id === bookId)
+    const bookIndex = this.props.lists[listIndex].books.findIndex((book) => {
+      return (book) ? book.id === bookId : null
+    })
     
     return this.props.lists[listIndex].books[bookIndex]
   }

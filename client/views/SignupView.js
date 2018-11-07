@@ -63,9 +63,9 @@ class SignupView extends React.Component {
         email: this.state.email,
         token: results.data.token
       }
-      this.props.navigation.navigate('Home')
       this.props.setAuthUser(user)
       this.setToken(results.data.token)
+      this.props.navigation.navigate('Create')
     }
     else if(results.data.error) {
       this.setState({

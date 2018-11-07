@@ -15,7 +15,7 @@ class ModalClubOptions extends React.Component {
       <View style={styles.wrapper}>
         <TouchableOpacity 
           style={styles.modalOption} 
-          onPress={() => {this.props.triggerEditForm('list', this.props.list)}}>
+          onPress={() => {this.props.triggerEditForm('club', this.props.club)}}>
 
           <FontIcon name="edit" size={25} color="#444" />
           <Text style={styles.optionText}>

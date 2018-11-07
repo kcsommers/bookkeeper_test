@@ -9,6 +9,31 @@ export const setFormData = (type, data) => {
   let formData = {}
 
   switch(type) {
+    case 'user':
+      url = `${Environment.BASE_URL}/users/update`
+      formFields.push({
+        field: 'username',
+        placeholder: 'Username',
+        value: data.user.username
+      },
+      {
+        field: 'location',
+        placeholder: 'Location',
+        value: data.user.location
+      },
+      {
+        field: 'image',
+        enpoint: 'users',
+        text: 'Select Profile Image'
+      }, 
+      {
+        field: 'banner',
+        endpoint: 'users',
+        text: 'Select Banner Image'
+      });
+      
+      miscData.userId = data.user.id
+      break
     case 'list':
       url = `${Environment.BASE_URL}/lists`
       formFields.push({
@@ -112,8 +137,10 @@ export const setFormData = (type, data) => {
       }, 
       {
         type: 'userId',
-        value: data.userId
+        value: data.user.id
       });
+
+      miscData.username = data.user.username
       break;
   }
   formData.formFields = formFields
@@ -126,6 +153,8 @@ export const setFormData = (type, data) => {
 
 export const setUpdateFormData = (type, data) => {
   let formFields = []
+  let modelFields = []
+  let miscData = {}
   let url = ''
   let formData = {}
 
@@ -144,8 +173,14 @@ export const setUpdateFormData = (type, data) => {
         field: 'description',
         placeholder: '',
         value: data.description
-      })
-      break
+      },
+      {
+        field: 'banner',
+        endpoint: 'books',
+        text: 'Select Banner Image'
+      });
+      miscData.bookId = data.id;
+      break;
     case 'note':
       url = `${Environment.BASE_URL}/notes/update`
       formFields.push({
@@ -195,13 +230,15 @@ export const setUpdateFormData = (type, data) => {
         field: 'email',
         placeholder: '',
         value: data.email 
-      })
+      });
   }
 
-  formData.formFields = formFields
-  formData.httpData = {url}
+  formData.formFields = formFields;
+  formData.modelFields = modelFields;
+  formData.miscData = miscData;
+  formData.httpData = {url};
 
-  return formData
+  return formData;
 }
 
 export const handleDelete = async (data) => {

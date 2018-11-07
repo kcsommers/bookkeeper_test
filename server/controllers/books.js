@@ -2,9 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const db = require('../models');
-const cloudinary = require('cloudinary');
 const multer = require('multer');
-const upload = multer({dest: 'uploads/'})
+const uploader = multer({dest: 'uploads/'});
+const uploadToCloudinary = require('../sharedFunctions').uploadToCloudinary;
 
 router.post('/', (req, res) => {
   console.log('HIT CREATE BOOK ROUTE')
@@ -64,27 +64,39 @@ router.get('/', (req, res) => {
   });
 });
 
-router.post('/update', upload.single('data'), (req, res) => {
+router.post('/update', uploader.fields([{name: 'image'}, {name: 'banner'}]), (req, res) => {
   console.log('HIT UPDAT BOOK ROUTE')
+  console.log(req.body)
 
-  // let newData = req.body.newData
-  if(req.file) {
-    cloudinary.uploader.upload(req.file.path, (result) => {
-      // newData.banner = result.public_id
-      console.log(result.url)
+  let miscData = JSON.parse(req.body.miscData)
+  let newData = JSON.parse(req.body.inputData)
+
+  if(Object.keys(req.files).length) {
+    uploadToCloudinary(req.files).then((imgUrls) => {
+      newData = Object.assign(newData, imgUrls);
+      db.book.update(newData, {
+        where: {id: miscData.bookId}
+      }).then((bookResult) => {
+        res.json({success: bookResult, miscData, newData, type: "book"});
+      }).catch((err) => {
+        console.log("ERROR UPDATING BOOK IN DB", err);
+        res.json({err});
+      });
+    }).catch((err) => {
+      console.log("CONTROLLER, ERROR UPLOADING TO CLOUDINARY", err)
+      res.json({err});
     });
   }
-  // console.log(newData)
-  // db.book.update(newData, {
-  //   where: {
-  //     id: req.body.id
-  //   }
-  // }).then((book) => {
-  //   res.json({book})
-  // }).catch((err) => {
-  //   console.log("ERROR UPDATING BOOK", err)
-  //   res.json({err})
-  // });
+  else {
+    db.book.update(newData, {
+      where: {id: miscData.bookId}
+    }).then((bookResult) => {
+      res.json({success: bookResult});
+    }).catch((err) => {
+      console.log('ERROR UPDATING BOOK', err);
+      res.json({err});
+    })
+  }
 });
 
 router.delete('/:id', (req, res) => {

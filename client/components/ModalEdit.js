@@ -13,7 +13,7 @@ import {
 } from '../actions/listsActions'
 
 import {setUpdateFormData} from '../formFunctions'
-import UpdateForm from './UpdateForm'
+import AddForm from './AddForm'
 
 class ModalEdit extends React.Component {
   constructor(props) {
@@ -36,6 +36,7 @@ class ModalEdit extends React.Component {
         break
       case 'list':
         this.props.updateList(data)
+        break
 
     }
 
@@ -49,10 +50,9 @@ class ModalEdit extends React.Component {
   }
 
   render() {
-    console.log('KJKJHKJHKJHK', this.props.type)
     return (
       <View style={styles.wrapper}>
-        <UpdateForm 
+        <AddForm 
           data={this.state.formData}
           onSubmit={(data) => {this.updateStore(data)}}
           itemId={this.props.data.item.id} />

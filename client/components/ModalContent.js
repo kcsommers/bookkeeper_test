@@ -103,7 +103,6 @@ class ModalContent extends React.Component {
 
   render() {
     const modalData = this.state.modalData
-    console.log(modalData)
     let display = ''
     switch(modalData.type) {
       case 'notes':

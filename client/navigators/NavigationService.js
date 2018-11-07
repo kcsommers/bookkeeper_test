@@ -7,8 +7,6 @@ const setTopLevelNavigator = (navigatorRef) => {
 }
 
 const navigate = (routeName, params) => {
-  console.log("COME THE FUCK ON")
-  console.log(navigator)
   navigator.dispatch(
     NavigatorActions.navigate({routeName})
   )
