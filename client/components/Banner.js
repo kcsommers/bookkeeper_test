@@ -6,11 +6,11 @@ import {
   Image
 } from 'react-native'
 
-const BookView = (props) => {
+const Banner = (props) => {
   return (
     <View>
       <Image 
-        source={{uri: 'https://res.cloudinary.com/kcsommers/image/upload/v1530509212/lflbvvr8kjmgae9suzov.jpg'}}
+        source={{uri: props.image}}
         style={styles.image}
       />
     </View>
@@ -24,4 +24,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default BookView
+export default Banner

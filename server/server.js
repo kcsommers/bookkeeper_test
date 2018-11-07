@@ -7,6 +7,7 @@ app.use(express.static(__dirname + 'static'));
 app.use(bp.urlencoded({extended: true}));
 app.use(bp.json());
 app.use('/auth', require('./controllers/auth').router);
+app.use('/users', require('./controllers/users').router);
 app.use('/books', require('./controllers/books').router);
 app.use('/lists', require('./controllers/lists').router);
 app.use('/notes', require('./controllers/notes').router);

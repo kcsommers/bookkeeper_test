@@ -2,19 +2,25 @@ require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const db = require('../models');
+const multer = require('multer')().single();
+router.use(multer);
 
 router.post('/', (req, res) => {
   console.log('HIT CREATE ClUB ROUTE')
+  const inputData = JSON.parse(req.body.inputData);
+  const modelData = JSON.parse(req.body.modelData);
+  const miscData = JSON.parse(req.body.miscData);
+
   db.club.create({
-    name: req.body.name,
-    description: req.body.description,
-    admin: req.body.admin,
-    topic: req.body.topic,
-    imgUrl: req.body.imgUrl,
-    bookImg: req.body.bookImg
+    name: inputData.name,
+    description: inputData.description,
+    admin: modelData.admin,
+    topic: inputData.topic,
+    imgUrl: 'IMGGGGG STRING',
+    bookImg: modelData.bookImg
   }).then((club) => {
-    db.user.findById(req.body.miscData.userId).then((user) => {
-      db.book.findById(req.body.miscData.bookId).then((book) => {
+    db.user.findById(miscData.userId).then((user) => {
+      db.book.findById(miscData.bookId).then((book) => {
         club.addUser(user);
         club.addBook(book).then((result) => {
           club.dataValues.posts = []

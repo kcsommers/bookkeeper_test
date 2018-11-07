@@ -2,13 +2,16 @@ require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const db = require('../models');
+const multer = require('multer')().single();
+router.use(multer)
 
 router.post('/', (req, res) => {
   console.log('HIT CREATE LIST ROUTE')
-  const listData = req.body
+  const inputData = JSON.parse(req.body.inputData);
+  const modelData = JSON.parse(req.body.modelData);
   db.list.create({
-    name: listData.name,
-    userId: listData.userId
+    name: inputData.name,
+    userId: modelData.userId
   }).then((list) => {
     list.dataValues.books = []
     res.json({list: list.dataValues})

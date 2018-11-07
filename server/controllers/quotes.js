@@ -2,14 +2,18 @@ require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const db = require('../models');
+const multer = require('multer')().single();
+router.use(multer);
 
 router.post('/', (req, res) => {
   console.log("HIT CREATE QUOTE ROUTE")
+  const inputData = JSON.parse(req.body.inputData);
+  const modelData = JSON.parse(req.body.modelData);
   db.quote.create({
-    content: req.body.content,
-    page: req.body.page,
-    userId: req.body.userId,
-    bookId: req.body.bookId
+    content: inputData.content,
+    page: inputData.page,
+    userId: modelData.userId,
+    bookId: modelData.bookId
   }).then((quote) => {
     res.json({quote})
   }).catch((err) => {

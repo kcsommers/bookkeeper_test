@@ -51,18 +51,22 @@ class ImageUpload extends React.Component {
       aspect: [4, 3],
     });
 
-    if (!result.cancelled) {
+    if(!result.cancelled) {
       this.setState({ image: result.uri });
-      this._sendToServer()
+      console.log('IMAGE UPLOAD ABOUT TO ADD IMGAGE')
+      this.props.addImage({type: this.props.type, uri: result.uri})
     }
   }
 
   render() {
     let image = this.state.image
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{
+        flexDirection: 'row', 
+        justifyContent: 'flex-start'
+      }}>
         <Button
-          title="Pick an image from camera roll"
+          title={this.props.text}
           onPress={this._pickImage}
         />
         {image &&

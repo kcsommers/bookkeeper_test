@@ -78,7 +78,7 @@ class ClubView extends React.Component {
           key={i}
         />
       ))
-      const formData = setFormData('post', {clubId: club.id, userId: this.props.user.id})
+      const formData = setFormData('post', {clubId: club.id, user: this.props.user})
       return (
         <ScrollView contentContainerStyle={styles.container}>
           <Banner image={bg1} />
